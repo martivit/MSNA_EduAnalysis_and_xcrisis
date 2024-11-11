@@ -1,0 +1,62 @@
+"","label_group_var_value_1","% of school-aged children who attended school or any early childhood education program at any time during the 2023-2024 school year  %/% Overall","% of school-aged children who attended school or any early childhood education program at any time during the 2023-2024 school year  %/% Boys","% of school-aged children who attended school or any early childhood education program at any time during the 2023-2024 school year  %/% Girls","% of school-aged children who attended school or any early childhood education program at any time during the 2023-2024 school year  %/% NA","% of school-aged children attending primary school who are at least 2 years above the intended age for their grade %/% Overall","% of school-aged children attending primary school who are at least 2 years above the intended age for their grade %/% Boys","% of school-aged children attending primary school who are at least 2 years above the intended age for their grade %/% Girls","% of school-aged children attending primary school who are at least 2 years above the intended age for their grade %/% NA","% of school-aged children attending secondary school who are at least 2 years above the intended age for their grade %/% Overall","% of school-aged children attending secondary school who are at least 2 years above the intended age for their grade %/% Boys","% of school-aged children attending secondary school who are at least 2 years above the intended age for their grade %/% Girls"
+"1","Ayeyarwady","5","5","5",NA,NA,NA,NA,NA,NA,NA,NA
+"2","Bago (East)","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"3","Bago (West)","5","5","5",NA,"2","2","2",NA,"2",NA,"2"
+"4","Chin","3","3","3",NA,"2","2","2",NA,"2","2","2"
+"5","Kachin","4","4","4",NA,"2","2","2",NA,"2","2","2"
+"6","Kayah","3","3","3","5","2","2","2",NA,"2","2","2"
+"7","Kayin","4","4","4","5","2","2","2","5","2","2","2"
+"8","Magway","4","4","4",NA,"2","2","2",NA,"2","2","2"
+"9","Mandalay","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"10","Mon","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"11","Nay Pyi Taw","5","5","5",NA,"2","2","2",NA,"2","2",NA
+"12","Rakhine","4","4","4",NA,"2","2","2",NA,"2","2","2"
+"13","Sagaing","2","2","3",NA,"2","2","2",NA,"2","2","2"
+"14","Shan (East)","5","5","5",NA,"2","2","2",NA,"2",NA,"2"
+"15","Shan (North)","4","4","4",NA,"2","2","2",NA,"2","2","2"
+"16","Shan (South)","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"17","Tanintharyi","4","5","4","5","2","2","2",NA,"2","2","2"
+"18","Yangon","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"19","Ayeyarwady#ocap","5","5","5",NA,NA,NA,NA,NA,NA,NA,NA
+"20","Bago (East)#idp","4","4","4",NA,"2","2","2",NA,"2","2","2"
+"21","Bago (East)#ocap","5","5","5",NA,"2","2","2",NA,"2","2",NA
+"22","Bago (East)#ret","4","3","4",NA,"2",NA,"2",NA,NA,NA,NA
+"23","Bago (West)#ocap","5","5","5",NA,"2","2","2",NA,"2",NA,"2"
+"24","Chin#idp","3","3","3",NA,"2","2",NA,NA,"2","2",NA
+"25","Chin#ocap","3","3","3",NA,"2","2","2",NA,"2","2",NA
+"26","Chin#ret","3","3","3",NA,"2","2","2",NA,"2","2","2"
+"27","Kachin#idp","4","4","5",NA,"2","2","2",NA,"2","2","2"
+"28","Kachin#ocap","5","5","4",NA,"2","2",NA,NA,"2","2",NA
+"29","Kachin#ret","4","4","4",NA,"2",NA,"2",NA,"2","2","2"
+"30","Kayah#idp","4","3","4","5","2","2","2",NA,"2",NA,"2"
+"31","Kayah#ocap","3","3","3",NA,"2","2",NA,NA,"2",NA,"2"
+"32","Kayah#ret","3","3","3",NA,"2","2","2",NA,"2","2","2"
+"33","Kayin#idp","4","4","4",NA,"2","2","2",NA,"2","2","2"
+"34","Kayin#ocap","4","4","4","5","2","2","2","5","2","2","2"
+"35","Kayin#ret","4","3","4",NA,"2","2","2",NA,"2","2",NA
+"36","Magway#idp","3","3","3",NA,"2","2","2",NA,"2","2",NA
+"37","Magway#ocap","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"38","Magway#ret","3","3","3",NA,"2","2",NA,NA,"2","2","2"
+"39","Mandalay#ocap","5","5","5",NA,"2","2","2",NA,"2","2","2"
+"40","Mon#idp","4","4","4",NA,"2","2","2",NA,"2","2",NA
+"41","Mon#ocap","5","5","5",NA,"2","2","2",NA,"2",NA,"2"
+"42","Mon#ret","4","4","4",NA,"2","2","2",NA,"2","2",NA
+"43","Nay Pyi Taw#ocap","5","5","5",NA,"2","2","2",NA,"2","2",NA
+"44","Rakhine#idp","3","3","3",NA,"2","2","2",NA,"2","2","2"
+"45","Rakhine#ndsp","3","3","3",NA,"2","2","2",NA,"2","2","2"
+"46","Rakhine#ocap","4","4","4",NA,"2","2",NA,NA,"2","2",NA
+"47","Rakhine#ret","3","3","3",NA,"2","2","2",NA,"2",NA,"2"
+"48","Sagaing#idp","2","2","2",NA,NA,NA,NA,NA,"2","2",NA
+"49","Sagaing#ocap","3","2","3",NA,"2","2","2",NA,"2",NA,"2"
+"50","Sagaing#ret","2","2","2",NA,"2",NA,"2",NA,NA,NA,NA
+"51","Shan (East)#ocap","5","5","5",NA,"2","2","2",NA,"2",NA,"2"
+"52","Shan (North)#idp","2","2","2",NA,NA,NA,NA,NA,"2","2",NA
+"53","Shan (North)#ocap","4","4","4",NA,"2","2","2",NA,"2",NA,"2"
+"54","Shan (North)#ret","3","4","3",NA,"2","2","2",NA,"2","2",NA
+"55","Shan (South)#idp","4","4","3",NA,"2","2",NA,NA,"2","2",NA
+"56","Shan (South)#ocap","5","5","5",NA,"2",NA,"2",NA,"2","2","2"
+"57","Shan (South)#ret","4","4","4",NA,NA,NA,NA,NA,NA,NA,NA
+"58","Tanintharyi#idp","3","3","3","5","2","2","2",NA,"2",NA,"2"
+"59","Tanintharyi#ocap","5","5","4",NA,"2","2","2",NA,"2","2","2"
+"60","Tanintharyi#ret","4","3","4",NA,"2","2","2",NA,"2",NA,"2"
+"61","Yangon#ocap","5","5","5",NA,"2","2","2",NA,"2","2","2"
