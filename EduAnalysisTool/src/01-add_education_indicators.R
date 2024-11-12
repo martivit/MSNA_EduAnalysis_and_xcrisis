@@ -31,29 +31,29 @@ loop <- loop |>
   add_loop_edu_disrupted_d(occupation = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
   
   
-  loop <- loop %>%
+loop <- loop %>%
     dplyr::rename(
       edu_disrupted_hazards_d = !!rlang::sym(hazards_col),
       edu_disrupted_displaced_d = !!rlang::sym(displaced_col),
       edu_disrupted_teacher_d = !!rlang::sym(teacher_col)
-    )
-  
-  # Conditionally rename occupation if it is not NULL
-  if (!is.null(occupation_col)) {
+  )
+
+# Conditionally rename occupation if it is not NULL
+if (!is.null(occupation_col)) {
     loop <- loop %>%
       dplyr::rename(edu_disrupted_occupation_d = !!rlang::sym(occupation_col))
-  }
+}
 
-  # from 00_edu_function.R
-  loop <- loop |>
+# from 00_edu_function.R
+loop <- loop |>
   # Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
   add_edu_school_cycle(country_assessment = country_code, path_ISCED_file = path_ISCED_file, language_assessment =language_assessment) |>
-  
-  # IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
-  # Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners
+
+# IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
+# Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners
   add_edu_level_grade_indicators(country_assessment = country_code, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk) |>
-  
-  #harmonized variable to use the loa_edu
+
+#harmonized variable to use the loa_edu
   add_loop_edu_barrier_d(barrier = barrier)|>
   add_loop_child_gender_d (ind_gender = ind_gender, language_assessment = language_assessment)
 
@@ -61,9 +61,9 @@ loop <- loop |>
 #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
 #add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )|>
 
-if (!is.null(nonformal) && !is.na(nonformal)) {
+if (!is.null(nonformal) || !is.null(nonformal_type)) {
   loop <- loop |>
-    add_loop_edu_optional_nonformal_d(edu_other_yn = nonformal, edu_other_type = nonformal_type, pnta = pnta, dnk = dnk, yes= yes,no =no)
+    add_loop_edu_optional_nonformal_d(edu_other_yn = nonformal, edu_other_type = nonformal_type, pnta = pnta, dnk = dnk, yes = yes, no = no)
 }
 
 
@@ -90,7 +90,13 @@ if (country_assessment == "MMR"){
 # Merge main info into loop dataset
 # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
 check_and_set_merge_column <- function(loop, main_col) {
-    if (main_col %in% colnames(loop)) NULL else main_col
+  if (is.null(main_col)) {
+    NULL
+  } else if (main_col %in% colnames(loop)) {
+    NULL
+  } else {
+    main_col
+  }
 }
   
   

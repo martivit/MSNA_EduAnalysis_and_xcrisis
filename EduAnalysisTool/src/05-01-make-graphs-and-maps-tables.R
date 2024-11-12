@@ -64,7 +64,10 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
 no_admin_level <- disruptions_results_for_graphs %>%
   filter(str_detect(group_var, paste(include_values, collapse = "|")))
 
-
+no_admin_level <- no_admin_level %>%
+  filter(!str_detect(group_var, "prov_urbanity"))
+no_admin_level <- no_admin_level %>%
+  filter(!str_detect(group_var, "region_urbanity"))
 ##--------
 
 
@@ -239,6 +242,7 @@ type3_group_id %>% write.csv(paste0("output/plots_",country_assessment,"/", tab_
 # Removes admin level (should be maps?)
 only_admin_level <- disruptions_results_for_graphs %>%
   filter(str_detect(group_var, "admin1"))
+
 
 only_admin_level <- only_admin_level %>%
   unite(

@@ -7,12 +7,20 @@ get_country_data <- function(file_path, sheet_name, country_code) {
   country_data <- data %>%
     filter(country_assessment == country_code)
   
-  # Remove empty columns
-  country_data <- country_data %>%
-    select_if(~any(!is.na(.)))
+  # Convert to a named list, setting any completely empty or NA values to NULL
+  list_data <- lapply(country_data, function(x) {
+    # Check if the column is entirely empty or contains only NAs/empty strings
+    if (all(is.na(x) | x == "")) {
+      return(NULL)
+    } else {
+      return(x)
+    }
+  })
   
-  # Convert the non-empty values into a list
-  list_data <- lapply(country_data, function(x) ifelse(is.na(x), NULL, x))
+  # Unlist any single-element vectors to simplify the structure
+  list_data <- lapply(list_data, function(x) {
+    if (length(x) == 1) x[[1]] else x
+  })
   
   return(list_data)
 }

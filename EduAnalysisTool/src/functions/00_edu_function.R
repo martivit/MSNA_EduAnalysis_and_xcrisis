@@ -398,44 +398,55 @@ add_loop_child_gender_d <- function(
 ##----------------------------------------------------------------------------------------------------------
 add_loop_edu_optional_nonformal_d <- function(
     loop,
-    edu_other_yn = "edu_other_yn",
-    edu_other_type = 'edu_other_type',
+    edu_other_yn = NULL,
+    edu_other_type = NULL,
     yes = "yes",
     no = "no",
     pnta = "pnta",
     dnk = "dnk",
     ind_schooling_age_d = "edu_ind_schooling_age_d"
 ){
-  # Check if the necessary variables are in the data frame
-  if_not_in_stop(loop, edu_other_yn, "loop")
+  # Check if at least one of the variables is provided
+  if (is.null(edu_other_yn) && is.null(edu_other_type)) {
+    stop("At least one of 'edu_other_yn' or 'edu_other_type' must be provided.")
+  }
+  
+  # Check if 'ind_schooling_age_d' is in the data frame
   if_not_in_stop(loop, ind_schooling_age_d, "loop")
   
-  # Check if edu_other_type is in the dataframe; if not, skip adding edu_other_type_d
-  if (!is.null(edu_other_type) && edu_other_type %in% colnames(loop)) {
-    # Check if new colname edu_other_type_d already exists and warn if it will be replaced
-    edu_other_type_d <- paste0('edu_other_type', "_d")
+  #------ Process 'edu_other_yn' if not NULL
+  if (!is.null(edu_other_yn)) {
+    if_not_in_stop(loop, edu_other_yn, "loop")
+    
+    # Recode 'edu_other_yn_d' based on conditions
+    loop <- loop %>%
+      dplyr::mutate(
+        edu_other_yn_d = dplyr::case_when(
+          !!rlang::sym(ind_schooling_age_d) == 0 ~ NA_real_,
+          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == yes ~ 1,
+          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == no ~ 0,
+          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) %in% c(pnta, dnk) ~ NA_real_,
+          TRUE ~ NA_real_
+        )
+      )
+  }
+  
+  #------ Process 'edu_other_type' if not NULL
+  if (!is.null(edu_other_type)) {
+    if_not_in_stop(loop, edu_other_type, "loop")
+    
+    # Check if new column 'edu_other_type_d' already exists and warn if it will be replaced
+    edu_other_type_d <- "edu_other_type_d"
     if (edu_other_type_d %in% colnames(loop)) {
       rlang::warn(paste0(edu_other_type_d, " already exists in df. It will be replaced."))
     }
     
-    # Rename edu_other_type column by appending "_d"
+    # Rename 'edu_other_type' column by appending "_d"
     loop <- loop %>%
       dplyr::mutate(
         !!edu_other_type_d := !!rlang::sym(edu_other_type)
       )
   }
-  
-  #------ Recode edu_other_yn_d based on conditions
-  loop <- dplyr::mutate(
-    loop,
-    edu_other_yn_d = dplyr::case_when(
-      !!rlang::sym(ind_schooling_age_d) == 0 ~ NA_real_,
-      !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == yes ~ 1,
-      !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == no ~ 0,
-      !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) %in% c(pnta, dnk) ~ NA_real_,
-      TRUE ~ NA_real_
-    )
-  )
   
   return(loop)
 }
