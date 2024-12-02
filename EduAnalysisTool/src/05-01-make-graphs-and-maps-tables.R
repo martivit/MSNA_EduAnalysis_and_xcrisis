@@ -129,6 +129,8 @@ type1_group_id %>% write.csv(paste0("output/plots_",country_assessment,"/", tab_
 disruptions_only <- no_admin_level %>%
   filter(str_detect(main_analysis_variable, "Profile"))
 
+disruptions_only <- disruptions_only[!(disruptions_only$analysis_var %in% c("e_incident_trajet", "e_incident_ecol")), ]
+
 type2_group_by_results <- disruptions_only |>
   group_by(analysis_type, label_group_var_value_1, label_group_var_value_2)
 type2_group_id <- type2_group_by_results |>

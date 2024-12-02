@@ -13,7 +13,7 @@ loop <- read_xlsx(data_file,
 
 #check if start is NULL
 if (is.null(survey_start_date) || is.na(survey_start_date)) {
-  main$start <- as.POSIXct("2024-06-01 11:54:54.574")
+  main$start <- as.POSIXct("2024-09-05 11:54:54.574")
   survey_start_date = 'start'
 }
 

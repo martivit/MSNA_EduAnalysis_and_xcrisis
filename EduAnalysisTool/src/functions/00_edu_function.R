@@ -268,7 +268,9 @@ add_edu_level_grade_indicators  <- function(roster,
     
   
   
+  #filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2", "level3")]
   filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2")]
+  
   ## ----- NUM and DEN for: Percentage of school-aged children attending school who are at least 2 years above the intended age for grade: primary/lower secondary
   
   # Loop through each level to set flags for attendance at each level
@@ -280,14 +282,19 @@ add_edu_level_grade_indicators  <- function(roster,
   # Loop through each level to calculate the numerator for overage learners
   for (level in filtered_levels_overage) {
     overage_level_col_name <- paste0('edu_', level, "_overage_learners_d")
-    roster[[overage_level_col_name]] <- ifelse(roster[['level_code']] == level &
-                                                 (roster[[true_age_col]] - roster[['limit_age']]) > 0, 1, 0)
+    
+    roster[[overage_level_col_name]] <- ifelse(
+      roster[['level_code']] == level, 
+      ifelse((roster[[true_age_col]] - roster[['limit_age']]) >= 0, 1, 0), 
+      NA
+    )
   }
   
   roster <- roster %>%
     mutate(across(c(
       edu_level1_overage_learners_d,
       edu_level2_overage_learners_d
+      #edu_level3_overage_learners_d,
     ),
     ~ as.numeric(.)))
   

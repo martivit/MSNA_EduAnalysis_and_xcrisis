@@ -34,6 +34,11 @@ if ("Overall %/% % of school-aged children accessing education outside of formal
   wider_table <- wider_table %>%
     filter(!is.na(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat`))
 }
+if ("Ensemble %/% % d'enfants accédant à l'éducation en dehors des écoles formelles %/% 1 %/% stat" %in% colnames(wider_table)) {
+  wider_table <- wider_table %>%
+    filter(!is.na(`Ensemble %/% % d'enfants accédant à l'éducation en dehors des écoles formelles %/% 1 %/% stat`))
+}
+wider_table <- wider_table[, colSums(!is.na(wider_table)) > 0]
 
 order_appearing <- c(label_overall, labels_with_ages, unique(wider_table$label_group_var_value)) %>%
   na.omit() %>%

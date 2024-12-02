@@ -9,11 +9,13 @@ loop <- read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx')
 loop$overall <- "overall"
 
 loop <- loop %>%
+  dplyr::mutate(!!rlang::sym(weight_col) := as.numeric(!!rlang::sym(weight_col))) %>%
   dplyr::filter(!is.na(!!rlang::sym(weight_col)))
 
 # Convert to survey design, ensuring weight_col is evaluated as the column name
 design_loop <- loop |>
   as_survey_design(weights = all_of(weight_col))
+
 
 results_loop_weigthed <- create_analysis(
   design_loop,
