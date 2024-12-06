@@ -80,6 +80,11 @@ add_edu_level_grade_indicators  <- function(roster,
                                             id_col_loop = 'uuid',
                                             pnta = "pnta",
                                             dnk = "dnk"){
+  if (is.null(education_level_grade)) {
+    warning("education_level_grade is NULL. Returning the roster unchanged.")
+    return(roster)
+  }
+  
   
   ind_access = 'edu_ind_access_d'
   info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
