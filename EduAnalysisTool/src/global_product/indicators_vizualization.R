@@ -17,7 +17,8 @@ library(tidyr)
 library(officer)
 library(flextable)
 library(ggplot2)
-
+library(ggpattern)
+library(tidyverse)
 
 
 
@@ -41,8 +42,6 @@ generate_indicator_plot(indicator_list, labeled_binary_indicator_data, indicator
 
 ## create country_snapshot
 source("src/global_product/03_snapshot.R")
-
-
 for (country in available_countries) {
   tryCatch({
     generate_snapshot(country)
@@ -50,3 +49,17 @@ for (country in available_countries) {
     message("Error generating snapshot for ", country, ": ", e$message)
   })
 }
+
+
+
+## create barrier plot
+source("src/global_product/04_barrier_global.R")
+
+create_barrier_plot("overall")
+create_barrier_plot("overall %/% Boys", "boys")
+create_barrier_plot("overall %/% Girls", "girls")
+
+
+
+
+

@@ -47,7 +47,8 @@ binary_indicator_data <- binary_indicator_data %>%
 
 # Filter data for rows where analysis_var is edu_barrier_d
 barrier_data <- combined_data %>%
-  filter(analysis_var == "edu_barrier_d")
+  filter(analysis_var == "edu_barrier_d") %>%
+  mutate(group_var_value = str_replace_all(group_var_value, c("Filles" = "Girls", "Garcons" = "Boys")))
 
 
 
