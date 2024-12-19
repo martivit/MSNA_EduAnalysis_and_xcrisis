@@ -25,6 +25,17 @@ teacher_col <- paste0(list_variables$teacher, "_d")
 loop <- loop %>%
   mutate(!!ind_age := as.numeric(.data[[ind_age]]))
 
+# columns_to_convert <- c(
+#   "edu_access_only_formal", 
+#   "edu_access_only_nonformal", 
+#   "edu_access_formal_OR_structured_nonformal", 
+#   "edu_access_formal_AND_nonformal", 
+#   "edu_access_formal_OR_nonformal"
+# )
+# 
+# loop <- loop %>%
+#   mutate(across(all_of(columns_to_convert), ~ as.numeric(.)))
+
 #--------------------------------------------------------------------------------------------------------
 # Apply transformations to loop dataset
 loop <- loop |>
@@ -86,9 +97,14 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
                      undefined = c(dnk, pnta))
 }
 
-if (country_assessment == "MMR"){
+if (country_assessment == "MMR") {
   loop <- loop %>%
-    mutate(school_cycle_pop = NA_character_)
+    mutate(
+      school_cycle_pop = NA_character_,
+      disagg_pop_wgq_dis_3 = NA_character_,
+      disagg_pop_wgq_dis_2 = NA_character_,
+      disagg_pop_access = NA_character_
+    )
 }
 #--------------------------------------------------------------------------------------------------------
 # Merge main info into loop dataset
@@ -101,18 +117,24 @@ check_and_set_merge_column <- function(loop, main_col) {
 add_col6_merge <- if (!is.null(add_col6)) check_and_set_merge_column(loop, add_col6) else NULL
 add_col7_merge <- if (!is.null(add_col7)) check_and_set_merge_column(loop, add_col7) else NULL
 add_col8_merge <- if (!is.null(add_col8)) check_and_set_merge_column(loop, add_col8) else NULL
-
+add_col9_merge <- if (!is.null(add_col9)) check_and_set_merge_column(loop, add_col9) else NULL
+add_col4 = 'edu_community_modality'
   
 loop <- merge_main_info_in_loop(loop = loop, main = main, id_col_loop = id_col_loop, id_col_main = id_col_main,
                                 admin1 = admin1, admin2 = admin2, admin3 = admin3, stratum = stratum, 
                                 additional_stratum = additional_stratum, weight = weight_col, 
                                 add_col1 = add_col1, add_col2 = add_col2, add_col3 = add_col3, 
                                 add_col4 = add_col4, add_col5 = add_col5, add_col6 = add_col6_merge, 
-                                add_col7 = add_col7_merge, add_col8 = add_col8_merge)
+                                add_col7 = add_col7_merge, add_col8 = add_col8_merge,  add_col9 = add_col9_merge)
 
 if (country_assessment == "MMR") {
   loop <- loop %>%
-    mutate(school_cycle_pop = paste(pop_group, edu_school_cycle_d, sep = " # "))
+    mutate(
+      school_cycle_pop = paste(pop_group, edu_school_cycle_d, sep = "#"),
+      disagg_pop_wgq_dis_3 = paste(pop_group, wgq_dis_3, sep = "#"),
+      disagg_pop_wgq_dis_2 = paste(pop_group, wgq_dis_2, sep = "#"),
+      disagg_pop_access= paste(pop_group, edu_ind_access_d, sep = "#")
+    )
 }
 
 # keep only school-age children

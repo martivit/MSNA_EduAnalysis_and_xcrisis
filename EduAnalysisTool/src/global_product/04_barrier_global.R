@@ -1,6 +1,7 @@
 create_barrier_plot <- function(group_plot, name_plot = "overall") {
   
-
+  n_top_barrier = 6
+  
   
   barrier_label <- read.csv("input_global/barrier_label.csv", header = TRUE, check.names = FALSE)
   
@@ -25,7 +26,6 @@ create_barrier_plot <- function(group_plot, name_plot = "overall") {
   barrier_data_filtered <- barrier_data_filtered %>%
     filter(!is.na(analysis_var_value) & !is.na(stat))
   
-  n_top_barrier = 5
   
   barrier_data_top7 <- barrier_data_filtered %>%
     group_by(country) %>% # Group by country
@@ -111,7 +111,7 @@ create_barrier_plot <- function(group_plot, name_plot = "overall") {
     ) +
     geom_text(
       aes(
-        label = paste0(round(stat, 1), "%"),  # Always display the label
+        label = ifelse(stat >= 2.5, paste0(round(stat, 1), "%"), ""),  # Only display label if stat >= 2.5
         angle = ifelse(stat >= 5, 0, 45)      # Tilt labels for values below 5%
       ),
       position = position_stack(vjust = 0.5), 
@@ -124,7 +124,7 @@ create_barrier_plot <- function(group_plot, name_plot = "overall") {
     labs(
       x = "",
       y = "",
-      title = paste0("Top 5 Barriers to Education by Country, ",name_plot),
+      title = paste0("Top 6 Barriers to Education by Country, ",name_plot),
       subtitle = "% of school-aged children not attending school or any early childhood education program at any time during the 2023-2024 school year, by main reason"
     ) +
     theme_minimal() +

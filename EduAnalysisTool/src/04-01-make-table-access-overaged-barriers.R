@@ -21,6 +21,9 @@ filtered_education_results_table_labelled <- filtered_education_results_table_la
 filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
   filter(!str_detect(group_var_value, "% NA"))
 
+#filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
+  #filter(!str_detect(group_var_value, regex("other|pnta", ignore_case = TRUE)))
+
 saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/", tab_helper, "_results_", country_assessment, ".rds"))
 
 # Create the wider table using external functions
@@ -30,6 +33,41 @@ wider_table <- filtered_education_results_table_labelled %>%
     label_female = label_female,
     label_male = label_male
   )
+
+if (tab_helper == "non_formal") {
+  wider_table <- wider_table %>%
+    filter(!(label_group_var == "Age-Assigned School Cycle" & 
+               map_lgl(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat`, is.null)))
+
+
+  list_columns <- names(wider_table)[map_lgl(wider_table, is.list)]
+  
+  # Exclude specific columns
+  excluded_columns <- c("label_group_var", "label_group_var_value")
+  target_columns <- setdiff(list_columns, excluded_columns)
+  
+  # Convert list columns to numeric, ensuring equal row counts
+  for (col in target_columns) {
+    wider_table[[col]] <- tryCatch({
+      # Pad the unlisted column to match the number of rows in the dataset
+      unlisted <- unlist(wider_table[[col]])
+      length_diff <- nrow(wider_table) - length(unlisted)
+      
+      # Add NAs if lengths do not match
+      c(unlisted, rep(NA, max(0, length_diff)))
+    }, error = function(e) {
+      # Replace the entire column with NAs on error
+      rep(NA, nrow(wider_table))
+    })
+    
+    # Convert to numeric
+    wider_table[[col]] <- as.numeric(wider_table[[col]])
+  }
+
+}
+
+
+
 if ("Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat" %in% colnames(wider_table)) {
   wider_table <- wider_table %>%
     filter(!is.na(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat`))
@@ -63,3 +101,4 @@ writeFormula(wb, "Table_of_content",
                text = data_helper[[tab_helper]]$title
              )
 )
+

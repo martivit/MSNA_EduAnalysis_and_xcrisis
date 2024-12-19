@@ -217,9 +217,10 @@ merge_main_info_in_loop <- function(loop,
                                     add_col5 = NULL,
                                     add_col6 = NULL,
                                     add_col7 = NULL,
-                                    add_col8 = NULL) {
+                                    add_col8 = NULL,
+                                    add_col9 = NULL) {
   # Create a vector of columns to check and merge from 'main'
-  cols_to_merge <- c(admin1, admin2, admin3, stratum, additional_stratum, weight, add_col1, add_col2, add_col3, add_col4, add_col5, add_col6, add_col7, add_col8)
+  cols_to_merge <- c(admin1, admin2, admin3, stratum, additional_stratum, weight, add_col1, add_col2, add_col3, add_col4, add_col5, add_col6, add_col7, add_col8, add_col9)
 
   # Filter out NULL values
   cols_to_merge <- cols_to_merge[!is.null(cols_to_merge)]
@@ -237,7 +238,12 @@ merge_main_info_in_loop <- function(loop,
   if (length(existing_cols_in_loop) > 0) {
     loop <- loop %>% select(-all_of(existing_cols_in_loop))
   }
-
+  
+  modality_cols <- grep("edu_community_modality", colnames(main), value = TRUE)
+  
+  cols_to_merge <- c(cols_to_merge, modality_cols)
+  
+  
   # Select necessary columns from 'main' for merging
   main_selected <- main %>% select(all_of(c(id_col_main, cols_to_merge)))
 

@@ -273,8 +273,8 @@ add_edu_level_grade_indicators  <- function(roster,
     
   
   
-  #filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2", "level3")]
-  filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2")]
+  filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2", "level3")]
+  #filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2")]
   
   ## ----- NUM and DEN for: Percentage of school-aged children attending school who are at least 2 years above the intended age for grade: primary/lower secondary
   

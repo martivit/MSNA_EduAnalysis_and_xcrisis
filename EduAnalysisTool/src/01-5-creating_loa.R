@@ -48,11 +48,11 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
     !is.null(wsg_selfcare) && !is.na(wsg_selfcare) &&
     !is.null(wsg_communicating) && !is.na(wsg_communicating)) {
   
+  #strata_wsg <- c('wgq_dis_3', 'wgq_dis_2', 'disagg_pop_wgq_dis_3', 'disagg_pop_wgq_dis_2') ## for MMR
   strata_wsg <- c('wgq_dis_3', 'wgq_dis_2')
   
-  # Select only the first 28 rows of model_stratum_rows
   model_stratum_rows_limited <- model_stratum_rows %>%
-    dplyr::slice(1:28)
+    dplyr::filter(!stringr::str_detect(analysis_var, "wgq"))
   
   for (stratum_value in strata_wsg) {
     # Create modified rows by replacing "model_stratum" with the current stratum_value
