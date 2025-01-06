@@ -8,6 +8,7 @@ all_data <- list()
 
 # Loop through each country and process the corresponding CSV file
 for (country in available_countries) {
+  print(paste0 ('-------------------------   ', country))
   # Construct the file name
   file_name <- paste0(output_folder, "analysis_key_output", country, ".csv")
   

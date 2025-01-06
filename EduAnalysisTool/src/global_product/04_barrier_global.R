@@ -81,7 +81,8 @@ create_barrier_plot <- function(group_plot, name_plot = "overall") {
     "Too young" = "#8095C3", # Slate Blue
     "Unable to enroll in school due to recent displacement/return" = "#9CB3C1", # Light Slate
     "Other" = "#E6E3B0", # Warm Beige
-    "Other, specify" = "#B3C0C7" # Soft Steel
+    "Other, specify" = "#B3C0C7", # Soft Steel,
+    "Protection risks whilst travelling to the school" = '#808080'
   )
   
   
@@ -89,7 +90,7 @@ create_barrier_plot <- function(group_plot, name_plot = "overall") {
   pattern_mapping <- setNames(
     c("none", "stripe", "stripe", "crosshatch", "none", "circle", "crosshatch", 
       "stripe", "none", "crosshatch", "circle", "stripe", "crosshatch", "circle", 
-      "stripe", "none", "stripe"),
+      "stripe", "none", "stripe", "none"),
     names(values)
   )
   

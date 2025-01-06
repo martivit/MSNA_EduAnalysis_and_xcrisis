@@ -2,12 +2,10 @@
 #--------------------------------------------------------------------------------------------------------
 # Read in the main and loop datasets
 main <- read_xlsx(data_file,
-                  guess_max = 50000,
                   na = c("NA", "#N/A", "", " ", "N/A"),
                   sheet = main_sheet)
 
 loop <- read_xlsx(data_file,
-                  guess_max = 50000,
                   na = c("NA", "#N/A", "", " ", "N/A"),
                   sheet = loop_sheet)
 
@@ -118,7 +116,7 @@ add_col6_merge <- if (!is.null(add_col6)) check_and_set_merge_column(loop, add_c
 add_col7_merge <- if (!is.null(add_col7)) check_and_set_merge_column(loop, add_col7) else NULL
 add_col8_merge <- if (!is.null(add_col8)) check_and_set_merge_column(loop, add_col8) else NULL
 add_col9_merge <- if (!is.null(add_col9)) check_and_set_merge_column(loop, add_col9) else NULL
-add_col4 = 'edu_community_modality'
+#add_col4 = 'edu_community_modality'
   
 loop <- merge_main_info_in_loop(loop = loop, main = main, id_col_loop = id_col_loop, id_col_main = id_col_main,
                                 admin1 = admin1, admin2 = admin2, admin3 = admin3, stratum = stratum, 

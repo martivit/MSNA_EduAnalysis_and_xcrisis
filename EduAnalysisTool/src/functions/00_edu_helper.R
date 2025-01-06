@@ -240,8 +240,10 @@ merge_main_info_in_loop <- function(loop,
   }
   
   modality_cols <- grep("edu_community_modality", colnames(main), value = TRUE)
+  fsl_cols <- grep("fsl_lcsi_withdew_children", colnames(main), value = TRUE)
   
-  cols_to_merge <- c(cols_to_merge, modality_cols)
+  
+  cols_to_merge <- c(cols_to_merge, modality_cols,fsl_cols )
   
   
   # Select necessary columns from 'main' for merging

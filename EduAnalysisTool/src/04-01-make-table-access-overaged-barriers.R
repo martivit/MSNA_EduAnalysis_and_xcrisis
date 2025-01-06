@@ -26,6 +26,52 @@ filtered_education_results_table_labelled <- filtered_education_results_table_la
 
 saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/", tab_helper, "_results_", country_assessment, ".rds"))
 
+#filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>% slice(1:3121)
+#filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
+  #filter(str_detect(tolower(group_var), "edu_school_cycle_d"))
+
+
+# 
+# create_education_table_group_x_var2 <- function(filtered_results,
+#                                                 label_overall = "Overall",
+#                                                 label_female = "Female / woman",
+#                                                 label_male = "Male / man") {
+#   filtered_results %>%
+#     select(label_analysis_var, label_analysis_var_value, label_group_var, label_group_var_value, stat, n_total) %>%
+#     tidyr::separate_wider_delim(
+#       cols = all_of(c("label_group_var", "label_group_var_value")),
+#       delim = " %/% ",
+#       names_sep = " %/% ",
+#       too_few = "align_start"
+#     ) %>%
+#     mutate(`label_group_var_value %/% 2` = ifelse(is.na(`label_group_var_value %/% 2`),
+#                                                   label_overall,
+#                                                   `label_group_var_value %/% 2`
+#     )) %>%
+#     # Drop all columns with %/% 3
+#     select(-matches("%/% 3")) %>%
+#     rename(
+#       label_group_var = `label_group_var %/% 1`,
+#       label_group_var_value = `label_group_var_value %/% 1`
+#     ) -> x1
+#   
+#   # Save intermediate result for debugging
+#   saveRDS(x1, "debug_intermediate_data.rds")
+#   
+#   x1 %>%
+#     pivot_wider(
+#       names_from = c("label_group_var_value %/% 2", "label_analysis_var", "label_analysis_var_value"),
+#       values_from = c("stat", "n_total"),
+#       names_glue = "{`label_group_var_value %/% 2`} %/% {label_analysis_var} %/% {label_analysis_var_value} %/% {.value}"
+#     ) %>%
+#     select(
+#       "label_group_var", "label_group_var_value",
+#       starts_with(label_overall),
+#       starts_with(label_female),
+#       starts_with(label_male)
+#     )
+# }
+
 # Create the wider table using external functions
 wider_table <- filtered_education_results_table_labelled %>%
   create_education_table_group_x_var(
@@ -33,36 +79,60 @@ wider_table <- filtered_education_results_table_labelled %>%
     label_female = label_female,
     label_male = label_male
   )
+# x1 <- readRDS("debug_intermediate_data.rds")
+# glimpse(x1)
+# duplicates <- x1 %>%
+#   group_by(
+#     label_group_var, 
+#     label_group_var_value, 
+#     `label_group_var_value %/% 2`,
+#     label_analysis_var, 
+#     label_analysis_var_value
+#   ) %>%
+#   filter(n() > 1) %>%
+#   ungroup()
+# 
+# # View duplicates
+# print(duplicates)
+# 
+# duplicates %>%
+#   arrange(label_group_var, label_group_var_value, label_analysis_var) %>%
+#   print(n = 50)
+# 
+# 
+# 
+# x1 %>%
+#   count(
+#     label_group_var,
+#     label_group_var_value,
+#     `label_group_var_value %/% 2`,
+#     label_analysis_var,
+#     label_analysis_var_value
+#   ) %>%
+#   filter(n > 1)
+# 
+# 
 
-if (tab_helper == "non_formal") {
-  wider_table <- wider_table %>%
-    filter(!(label_group_var == "Age-Assigned School Cycle" & 
-               map_lgl(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat`, is.null)))
 
-
-  list_columns <- names(wider_table)[map_lgl(wider_table, is.list)]
+if (tab_helper == "non_formal" && country_assessment == "MMR") {
   
-  # Exclude specific columns
-  excluded_columns <- c("label_group_var", "label_group_var_value")
-  target_columns <- setdiff(list_columns, excluded_columns)
+  numeric_columns <- names(wider_table)[-c(1, 2)]  # Exclude first two columns
   
-  # Convert list columns to numeric, ensuring equal row counts
-  for (col in target_columns) {
-    wider_table[[col]] <- tryCatch({
-      # Pad the unlisted column to match the number of rows in the dataset
-      unlisted <- unlist(wider_table[[col]])
-      length_diff <- nrow(wider_table) - length(unlisted)
-      
-      # Add NAs if lengths do not match
-      c(unlisted, rep(NA, max(0, length_diff)))
-    }, error = function(e) {
-      # Replace the entire column with NAs on error
-      rep(NA, nrow(wider_table))
+  wider_table[, numeric_columns] <- lapply(wider_table[, numeric_columns], function(col) {
+    sapply(col, function(x) {
+      if (is.double(x)) {
+        return(x[1])  # Extract first numeric value if it's a double
+      } else if (is.list(x) && length(x) == 1 && is.double(x[[1]])) {
+        return(x[[1]])  # Extract from list containing one double
+      } else {
+        return(NA)  # Set NA if neither condition is met
+      }
     })
-    
-    # Convert to numeric
-    wider_table[[col]] <- as.numeric(wider_table[[col]])
-  }
+  })
+  
+  
+  wider_table <- wider_table[-c(49:56), ]
+ 
 
 }
 

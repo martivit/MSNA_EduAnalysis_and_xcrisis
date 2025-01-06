@@ -25,7 +25,7 @@ country_assessment = 'MMR'
 
 strata_var_names <- c("admin1", "admin2", "admin3", "stratum", "additional_stratum", 
                       "add_col1", "add_col2", "add_col3", "add_col4", 
-                      "add_col5", "add_col6", "add_col7", "add_col8")
+                      "add_col5", "add_col6", "add_col7", "add_col8", "add_col9")
 
 ##---------------- READING INFO AND VARIABLES FROM  matadata.xlsx
 source("src/00-getting-info-country.R")
