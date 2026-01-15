@@ -19,7 +19,17 @@ filtered_education_results_table_labelled <- filtered_education_results_table_la
   select(-!!sym(tab_helper))
 
 filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
+  filter(
+    !analysis_var_value %in% c("dnk", "pnta", "no", "rarely", "none")
+  )
+
+filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
   filter(!str_detect(group_var_value, "% NA"))
+
+filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
+  filter(label_analysis_var != 
+           "G.4. During the 2025 school year, what was the **main reason [child] did not access formal school**?")
+
 
 #filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
   #filter(!str_detect(group_var_value, regex("other|pnta", ignore_case = TRUE)))
@@ -71,6 +81,8 @@ saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/",
 #       starts_with(label_male)
 #     )
 # }
+#"G.4. During the 2025 school year, what was the **main reason [child] did not access formal school**?"
+
 
 # Create the wider table using external functions
 wider_table <- filtered_education_results_table_labelled %>%
@@ -79,6 +91,25 @@ wider_table <- filtered_education_results_table_labelled %>%
     label_female = label_female,
     label_male = label_male
   )
+
+
+
+if (tab_helper == "non_formal") {
+  
+  # 1. Convert "NULL" -> NA only in character columns
+  wider_table <- wider_table %>%
+    mutate(across(where(is.character), ~ na_if(., "NULL")))
+  
+  # 2. Figure out which columns (after the first two) we actually want to check
+  cols_to_check <- names(wider_table)[-c(1, 2)]
+  # remove any list-columns from this check to avoid errors
+  cols_to_check <- cols_to_check[!map_lgl(wider_table[cols_to_check], is.list)]
+  
+  # 3. Keep rows where at least one of these columns is NOT NA
+  wider_table <- wider_table %>%
+    filter(if_any(all_of(cols_to_check), ~ !is.na(.)))
+}
+
 # x1 <- readRDS("debug_intermediate_data.rds")
 # glimpse(x1)
 # duplicates <- x1 %>%
@@ -114,7 +145,7 @@ wider_table <- filtered_education_results_table_labelled %>%
 # 
 
 
-if (tab_helper == "non_formal" && country_assessment == "MMR") {
+if (tab_helper == "non_formal" && (country_assessment == "MMR" || country_assessment == "DRC")) {
   
   numeric_columns <- names(wider_table)[-c(1, 2)]  # Exclude first two columns
   
@@ -136,13 +167,17 @@ if (tab_helper == "non_formal" && country_assessment == "MMR") {
 
 }
 
-
-
-if ("Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat" %in% colnames(wider_table)) {
+if ("Overall %/% % of school-aged children accessing education outside of formal schools during the 2024-2025 school year %/% always %/% stat" %in% colnames(wider_table)) {
   wider_table <- wider_table %>%
-    filter(!is.na(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2023-2024 school year %/% 1 %/% stat`))
+    filter(!is.na(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2024-2025 school year %/% 1 %/% stat`))
+}
+
+if ("Overall %/% % of school-aged children accessing education outside of formal schools during the 2024-2025 school year %/% 1 %/% stat" %in% colnames(wider_table)) {
+  wider_table <- wider_table %>%
+    filter(!is.na(`Overall %/% % of school-aged children accessing education outside of formal schools during the 2024-2025 school year %/% 1 %/% stat`))
 }
 if ("Ensemble %/% % d'enfants accédant à l'éducation en dehors des écoles formelles %/% 1 %/% stat" %in% colnames(wider_table)) {
+  print('i am here')
   wider_table <- wider_table %>%
     filter(!is.na(`Ensemble %/% % d'enfants accédant à l'éducation en dehors des écoles formelles %/% 1 %/% stat`))
 }
@@ -161,7 +196,10 @@ t1 <- wider_table |>
 t1
 create_xlsx_education_table(t1, wb, tab_helper)
 
-row_number <- row_number_lookup[[tab_helper]]
+if (tab_helper == 'access' || tab_helper == 'out_of_school' || tab_helper == 'overaged'){
+  row_number <- row_number_lookup[[tab_helper]]
+}
+#
 
 # Add a hyperlink to the table of content
 writeFormula(wb, "Table_of_content",

@@ -1,6 +1,6 @@
 
 # Read the dataset with indicators and loa
-loop <- read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
+loop <- readxl::read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
 
 ## --------------------------------------------------------------------------------------
 ## --------------------------------------------------------------------------------------
@@ -16,11 +16,11 @@ loop <- loop %>%
 design_loop <- loop |>
   as_survey_design(weights = all_of(weight_col))
 
-
+test_df <-
 results_loop_weigthed <- create_analysis(
   design_loop,
   loa = loa_country,
-  sm_separator =  ".")
+  sm_separator =  "_")
 
 results_loop_weigthed$results_table %>%  write.csv(paste0('output/analysis_key_output', country_assessment,'.csv'))
 results_loop_weigthed %>%

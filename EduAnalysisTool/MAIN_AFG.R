@@ -118,9 +118,9 @@ data_helper <- data_helper_sheets %>%
   set_names(data_helper_sheets)
 data_helper <- data_helper |>
   map(~ .x |>
-    as.list() %>%
-    map(na.omit) %>%
-    map(c))
+        as.list() %>%
+        map(na.omit) %>%
+        map(c))
 
 ##################################################################################################
 
@@ -131,9 +131,6 @@ loop_sheet <- label_edu_sheet
 source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
 
 source('src/01-5-creating_loa.R')
-
-# 2 ----------------- 02-education_analysis.R -----------------
-source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
 
 # 3 ----------------- 03-education_labeling.R -----------------
 source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled

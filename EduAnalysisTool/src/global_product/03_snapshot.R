@@ -128,7 +128,7 @@ generate_snapshot <- function(country) {
   add_disruption_data("Teacher's absence", get_percentage(binary_indicator_data, "edu_disrupted_teacher_d", "overall", "overall", country), "#79797B")
   add_disruption_data("Natural hazard", get_percentage(binary_indicator_data, "edu_disrupted_hazards_d", "overall", "overall", country), "#E4DFD4")
   add_disruption_data("School used as IDP shelter", get_percentage(binary_indicator_data, "edu_disrupted_displaced_d", "overall", "overall", country), "#D2D3D4")
-  add_disruption_data("School being occupied by armed groups", get_percentage(binary_indicator_data, "edu_disrupted_occupation_d", "overall", "overall", country), "#C7C8CA")
+  add_disruption_data("Direct attack on education", get_percentage(binary_indicator_data, "edu_disrupted_occupation_d", "overall", "overall", country), "#C7C8CA")
   
   # Create the disruption_data dataframe
   if (length(causes) > 0 && length(causes) == length(percentages) && length(percentages) == length(colors)) {

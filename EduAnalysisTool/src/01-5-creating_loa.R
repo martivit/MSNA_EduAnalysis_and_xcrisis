@@ -1,6 +1,6 @@
 
 # Read the dataset with indicators and loa
-loop <- read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
+loop <- readxl::read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
 
 ## ----------------------   CREATING THE LOA   ----------------------------------------------
 filtered_vars <- list()
@@ -23,9 +23,13 @@ if (length(filtered_vars) > 0) {
   print(filtered_vars)
 }
 
+
 strata_vars <- mget(strata_var_names, envir = .GlobalEnv, ifnotfound = NA) %>%
   purrr::discard(is.null) %>%
   purrr::discard(is.na)
+
+strata_vars <- c(strata_vars, "young_adult")
+
 
 model_stratum_rows <- loa_filtered %>%
   dplyr::filter(stringr::str_detect(group_var, "model_stratum"))
@@ -68,6 +72,18 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
 loa_country <- loa_filtered %>%
   dplyr::filter(!stringr::str_detect(group_var, "model_stratum"))
 
+loa_country <- loa_filtered %>%
+  dplyr::filter(!stringr::str_detect(group_var, "model_stratum")) %>%
+  # make sure we compare strings, and keep rows with NA safely
+  dplyr::mutate(
+    analysis_var = as.character(analysis_var),
+    group_var    = as.character(group_var)
+  ) %>%
+  # drop rows where group_var includes analysis_var
+  dplyr::filter(!coalesce(stringr::str_detect(group_var, stringr::fixed(analysis_var)), FALSE))%>%
+  dplyr::distinct()
 
+loa_country <- loa_country %>%
+  dplyr::filter(!stringr::str_detect(group_var, "disagg_pop_access"))
 loa_country %>%  write.csv(paste0('input_tool/loa_analysis_', country_assessment,'.csv'))
 

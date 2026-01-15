@@ -19,6 +19,12 @@ library(flextable)
 library(ggplot2)
 library(ggpattern)
 library(tidyverse)
+library (sysfonts)
+library (showtextdb)
+library(showtext)  # To load custom fonts
+library(scales)   # for percent()
+
+
 
 
 
@@ -32,6 +38,10 @@ source("src/functions/global_analysis_function.R")
 source("src/global_product/01_create_combined_dataset.R")
 # --> labeled_binary_indicator_data
 # --> barrier_data
+
+## combine datasets for powerBI:
+source("src/global_product/01_05_create_combined_dataset_powerBI.R")
+
 
 ## create global_plots
 source("src/global_product/02_plot_binary_indicators.R")

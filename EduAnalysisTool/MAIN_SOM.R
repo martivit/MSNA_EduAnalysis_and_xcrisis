@@ -161,12 +161,33 @@ loa_country <- read.csv(paste0('input_tool/loa_analysis_', country_assessment,'.
 
 # 5 ----------------- 04-01-make-table-access-disruptions.R -----------------
 # To repeat according to the number of tabs in the data_helper
+# 5 ----------------- 04-01-make-table-access-disruptions.R -----------------
+# To repeat according to the number of tabs in the data_helper
 tab_helper <- "access"
+source("src/04-01-make-table-access-overaged-barriers.R")
+
+tab_helper <- "overaged"
 source("src/04-01-make-table-access-overaged-barriers.R")
 
 ## IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.
 tab_helper <- "out_of_school"
 source("src/04-01-make-table-access-overaged-barriers.R")
+
+# 5 ----------------- 04-02-make-level-table.R -----------------
+# To repeat according to the number of levels in the country's school system
+tab_helper <- "ece"
+source("src/04-02-make-level-table.R")
+
+tab_helper <- "level1"
+source("src/04-02-make-level-table.R")
+
+tab_helper <- "level2"
+source("src/04-02-make-level-table.R")
+
+
+tab_helper <- "non_formal"
+source("src/04-01-make-table-access-overaged-barriers.R")
+
 
 
 openxlsx::saveWorkbook(wb, paste0("output/education_results_",country_assessment, ".xlsx"), overwrite = T)

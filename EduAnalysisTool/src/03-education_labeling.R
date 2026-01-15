@@ -92,6 +92,17 @@ review_kobo_labels_results <- review_kobo_labels(updated_survey,
                                                  results_table = education_results_loop, 
                                                  label_column = kobo_language_label)
 
+type_debug <- updated_survey %>% 
+  mutate(row_id = row_number()) %>% 
+  tidyr::separate_wider_delim(
+    type,
+    delim = " ",
+    names = c("q_type", "list_name"),
+    too_many = "debug",   # <— this is the important part
+    too_few  = "debug"
+  )
+
+
 label_dictionary <- create_label_dictionary(updated_survey, 
                                             kobo_choices_fixed, 
                                             results_table = education_results_loop, 

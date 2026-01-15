@@ -91,3 +91,7 @@ for (country in available_countries) {
 write_csv(labeled_binary_indicator_data, "output/global/labeled_binary_indicator_data.csv")
 
 
+
+
+
+

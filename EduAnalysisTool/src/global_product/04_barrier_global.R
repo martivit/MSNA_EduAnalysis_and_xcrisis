@@ -65,32 +65,81 @@ create_barrier_plot <- function(group_plot, name_plot = "overall") {
   
   
   values <- c(
-    "Cannot afford the direct costs of education" = "#6D9DC5", # Muted Blue
-    "Child needs to work at home or on the household's own farm" = "#92C1C4", # Soft Teal
-    "Child participating in income generating activities outside of the home" = "#9E94C5", # Lavender
-    "Lack of appropriate and accessible school" = "#D7B5A6", # Pale Rose
-    "Marriage, engagement and/or pregnancy" = "#BFA58A", # Taupe
-    "No school in the area or school is too far" = "#A3C4C9", # Mist Blue
-    "School does not have enough classrooms that are usable" = "#8CABA8", # Sage
-    "School has been closed due to damage, natural disaster, conflict" = "#C5D8A6", # Soft Olive
-    "School has been closed due to natural disaster" = "#D9CAB3", # Light Khaki
-    "The child's disability or health issues prevents them from accessing school" = "#C5A49A", # Faded Peach
-    "The child has already graduated from secondary education" = "#C9B1A4", # Sandstone
-    "There is a ban preventing child from attending" = "#AFAFAF", # Neutral Gray
-    "There is a lack of interest/Education is not a priority either for the child or the household" = "#B0A2B6", # Dusty Mauve
-    "Too young" = "#8095C3", # Slate Blue
-    "Unable to enroll in school due to recent displacement/return" = "#9CB3C1", # Light Slate
-    "Other" = "#E6E3B0", # Warm Beige
-    "Other, specify" = "#B3C0C7", # Soft Steel,
-    "Protection risks whilst travelling to the school" = '#808080'
+    "Cannot afford the direct costs of education" = "#6D9DC5",
+    "Not enough food for the family and school does not provide school feeding" = "#7FA8C9",
+    
+    "The child is too young" = "#8095C3",
+    "The child has already graduated from secondary education" = "#C9B1A4",
+    "The child has already completed compulsory school grades" = "#CDB8AD",
+    
+    "There is a lack of interest for formal education" = "#B0A2B6",
+    "Education is not a priority either for the child or the household" = "#B0A2B6",
+    "There is a lack of interest/Education is not a priority either for the child or the household" = "#B0A2B6",
+    "Curriculum and/or the certificates issued by school are not perceived to be useful for the household" = "#B8AFC3",
+    "Differentiations and community perceptions affecting participation" = "#B7ADC6",
+    
+    "Lack of appropriate and accessible school" = "#D7B5A6",
+    "No school in the area or school is too far" = "#A3C4C9",
+    "Unable to enrol in school due to lack of enrolment space" = "#A8C6CC",
+    "No education programmes available in the community/camp" = "#AACBCF",
+    
+    "School does not have enough classrooms that are usable" = "#8CABA8",
+    "School's water, sanitation or handwashing facilities are in poor condition or not available" = "#9CBFB9",
+    "Inadequate or damaged infrastructure for learning in a safe environment (e.g. damaged school facilities, no or inadequate bomb shelter)" = "#8FB1AD",
+    "Lack of quiet and safe space to attend or listen to online learning classes" = "#9FB9B4",
+    
+    "School has been closed due to conflict" = "#C5D8A6",
+    "School has been closed due to natural disaster" = "#D9CAB3",
+    "School has been closed due to damage, natural disaster, conflict" = "#C5D8A6",
+    "School being occupied by armed forces/non-state armed groups" = "#B6C59A",
+    "School being hit by munitions/burning or theft/looting" = "#B3C08F",
+    "School used to host displaced people" = "#B8C8A4",
+    
+    "Protection/safety risks while commuting to school" = "#808080",
+    "Protection/safety risks while at school" = "#8E8E8E",
+    "Protection risks whilst travelling to the school" = "#808080",
+    "Child is associated with armed forces or armed groups" = "#7A7A7A",
+    
+    "Child needs to work at home or on the household's own farm, i.e. is not earning an income for these activities, but may allow other family members to earn an income" = "#92C1C4",
+    "Child needs to work at home or on the household's own farm" = "#92C1C4",
+    "Child participating in income generating activities outside of the home" = "#9E94C5",
+    
+    "Marriage or engagement" = "#BFA58A",
+    "Pregnancy" = "#C2A092",
+    "Marriage, engagement and/or pregnancy" = "#BFA58A",
+    "Personal or family responsibilities, for female" = "#C5AE9E",
+    
+    "Physical constraints to the facilities especially for persons with disability, building not accessible, transport not accessible, too far, etc./Personel not trained or equipped to support persons with disabilities" = "#C5A49A",
+    "The child's disability or other health issues prevent them from accessing school" = "#C5A49A",
+    "The child's disability prevent them from accessing school" = "#C8A89E",
+    "The child's health issues prevent them from accessing school" = "#CBAFA6",
+    
+    "Unable to enroll in school due to lack of documentation" = "#AFAFAF",
+    "Unable to enroll in school due to recent displacement/return,displacement since after the start of the school year" = "#9CB3C1",
+    "Unable to enroll in school due to recent displacement/return" = "#9CB3C1",
+    "Forced return from abroad interrupted their school year" = "#A7B7C2",
+    "There is a ban preventing child from attending" = "#AFAFAF",
+    "There is a limitation preventing the child from attending" = "#B5B5B5",
+    
+    "Discrimination or stigmatization of the child for any reason" = "#B6B6C9",
+    "Language issues" = "#B3B9CC",
+    
+    "Unavailability of menstrual hygiene supplies and facilities in schools" = "#C7B2C2",
+    
+    "Lack of appropriate IT equipment (laptop, tablet, etc)" = "#9FB3C8",
+    "Internet connection of bad quality  or no internet connection" = "#A5BBD0",
+    "Lack of other school supplies (notebook, pencil, textbooks, etc. )" = "#B0C3D1",
+    
+    "Other (open response from respondent)" = "#E6E3B0",
+    "Other" = "#E6E3B0",
+    "Don't know" = "#D0D0D0",
+    "Prefer not to answer" = "#DADADA"
   )
-  
   
   # Create a pattern mapping (can be adjusted based on unique barriers)
   pattern_mapping <- setNames(
-    c("none", "stripe", "stripe", "crosshatch", "none", "circle", "crosshatch", 
-      "stripe", "none", "crosshatch", "circle", "stripe", "crosshatch", "circle", 
-      "stripe", "none", "stripe", "none"),
+    c("none","stripe","none","none","none","none","circle","circle","circle","circle","circle","stripe","stripe","stripe","stripe","crosshatch","crosshatch","crosshatch","crosshatch","crosshatch","circle","crosshatch","crosshatch","crosshatch","crosshatch","stripe","stripe","stripe","stripe","circle","circle","circle","none","none","none","none","circle","circle","circle","circle","stripe","stripe","stripe","stripe","stripe","circle","circle","circle","stripe","stripe","stripe","none","none","none","none")
+    ,
     names(values)
   )
   

@@ -185,7 +185,8 @@ source("src/04-02-make-level-table.R")
 tab_helper <- "level3"
 source("src/04-02-make-level-table.R")
 
-
+tab_helper <- "non_formal"
+source("src/04-01-make-table-access-overaged-barriers.R")
 
 openxlsx::saveWorkbook(wb, paste0("output/education_results_",country_assessment, ".xlsx"), overwrite = T)
 openxlsx::openXL(paste0("output/education_results_",country_assessment,".xlsx"))

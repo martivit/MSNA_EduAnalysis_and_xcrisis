@@ -1,8 +1,17 @@
 
 indicator <- indicator_list[1]
+country_labels <- tibble::tibble(
+  country_code = c("AFG", "BFA", "CAR", "DRC", "ETH", "HTI1", "HTI2", "KEN1",  "MLI", "MOZ","MMR", "NER", "SOM", "SSD", "SYR", "SDN", "UKR", "LBN"),
+  country_name = c("Afghanistan", "Burkina Faso", "Central African Republic", "Democratic Republic of Congo", 
+                   "Ethiopia", "Haiti (country wide)", "Haiti (ZMPP)",  "Kenya", 
+                   "Mali", "Mozambique", "Myanmar", "Niger", "Somalia", "South Sudan", "Syria (NE+NW)", "Sudan", "Ukraine", "Lebanon")
+)
 
+font_add(family = "Segoe UI", regular = "segoeui.ttf", bold = "segoeuib.ttf")
+font_add(family = "Segoe UI Light", regular = "segoeuil.ttf")
+showtext_auto()
 
-plot_title <- str_wrap(indicator_label_list[[indicator]], width = 100) # Automatically format title with line breaks
+plot_title <- str_wrap(indicator_label_list[[indicator]], width = 70) # Automatically format title with line breaks
 
 
 # Define a function to generate and save plots for an indicator
@@ -30,6 +39,8 @@ generate_indicator_plot <- function(indicator_list, labeled_binary_indicator_dat
       filter(
         analysis_var == indicator,
         group_var_value %in% c(base1, base2, base3)
+        #group_var_value %in% c(base1)
+        
       ) %>%
       mutate(
         group_label = case_when(
@@ -42,6 +53,27 @@ generate_indicator_plot <- function(indicator_list, labeled_binary_indicator_dat
     # Prepare the data for plotting
     plot_data <- plot_data %>%
       mutate(
+        country = recode(country,
+                         "AFG" = "Afghanistan",
+                         "BFA" = "Burkina Faso",
+                         "CAR" = "Central African Republic",
+                         "DRC" = "Democratic Republic of Congo",
+                         "ETH" = "Ethiopia",
+                         "HTI1" = "Haiti (country wide)",
+                         "HTI2" = "Haiti (ZMPP)",
+                         "KEN1" = "Kenya",
+                         #"KEN2" = "Kenya (Host community)",
+                         "MLI" = "Mali",
+                         "MOZ" = "Mozambique",
+                         "MMR" = "Myanmar",
+                         "NER" = "Niger",
+                         "SOM" = "Somalia",
+                         "SSD" = "South Sudan",
+                         "SYR" = "Syria (NE+NW)",
+                         "SDN" = "Sudan", 
+                         "UKR"="Ukraine", 
+                         "LBN" = "Lebanon"
+        ),
         country = factor(country, levels = rev(unique(country))), # Reverse the order of countries
         group_label = factor(group_label, levels = c("Girls", "Boys", "All children")), # Reverse the order of bars
         stat = stat * 100 # Convert percentages to a 100 scale
@@ -50,6 +82,8 @@ generate_indicator_plot <- function(indicator_list, labeled_binary_indicator_dat
     p <- ggplot(plot_data, aes(x = country, y = stat, fill = group_label)) +
       geom_bar(stat = "identity", position = "dodge", alpha = 0.8) + # Added transparency to bars
       scale_fill_manual(values = c("All children" = "#EE5859", "Girls" = "#D2CBB8", "Boys" = "#58585A")) +
+      #scale_fill_manual(values = c("All children" = "#EE5859")) +
+      
       coord_flip() +
       geom_errorbar(
         aes(
@@ -67,16 +101,21 @@ generate_indicator_plot <- function(indicator_list, labeled_binary_indicator_dat
         aes(
           y = stat_upp * 100 + 0.2, # Position text slightly above the end of the error bar
           label = paste0(round(stat, 1), "%"),
+          family = "Segoe UI Light", # Apply Segoe UI Light font to text labels
           color = group_label # Match percentage text color with group
         ),
         position = position_dodge(width = 0.9),
         hjust = -0.2,
-        size = 3
+        size = 15
       ) + # Add percentage labels for all groups
       scale_color_manual(
         values = c("All children" = "black", "Girls" = "gray40", "Boys" = "gray40"),
         guide = "none" # Remove legend for error bar and text colors
       ) +
+      scale_y_continuous(
+        limits = c(0, max(plot_data$stat_upp * 100, na.rm = TRUE) * 1.15), # Extend max by 15%
+        expand = expansion(mult = 0.02) # Prevents excess padding
+      )+
       labs(
         title = plot_title,  # Automatically formatted title
         x = "",
@@ -85,13 +124,17 @@ generate_indicator_plot <- function(indicator_list, labeled_binary_indicator_dat
       ) +
       theme_minimal() +
       theme(
-        text = element_text(size = 12),
+        text = element_text(size = 12, family = "Segoe UI Light"),
         legend.position = "bottom",
+        legend.text = element_text(size = 60, family = "Segoe UI Light"),
         legend.title = element_blank(),
-        plot.title = element_text(hjust = 0.5, size = 14), # Center-align and resize title
+        plot.title = element_text(hjust = 0.5, size = 55, face = "bold", family = "Segoe UI", lineheight = 0.5, margin = margin(r = 420,, l= 150, b = 10)), 
+        axis.text.y = element_text(size = 60, family = "Segoe UI Light"), # Country names in Segoe UI Light 14
         panel.grid = element_blank(), # Remove grid lines
         axis.text.x = element_blank(), # Remove x-axis numbers
         axis.ticks.x = element_blank() # Remove x-axis ticks
+        #plot.margin = margin( r = 100), # Increased right margin (r = 100)
+        
       )
     
     # Save the plot to a file using the current indicator and group_var_values as part of the file name
@@ -99,7 +142,7 @@ generate_indicator_plot <- function(indicator_list, labeled_binary_indicator_dat
       filename = paste0(output_folder, "/", indicator, "_", paste(group_var_values_base, collapse = "_"), ".jpeg"),
       plot = p,
       width = 12,
-      height = 8,
+      height = 12,
       dpi = 300
     )
   }
