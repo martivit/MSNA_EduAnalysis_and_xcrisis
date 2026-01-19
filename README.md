@@ -14,9 +14,8 @@
    - [Final output - I: Tables](#6-Create-Tables)
    - [Final output - II: Graphs](#7-Create-Graphs)
 
-## Content of the Analysis structure 
-
-### Analysis workflow/pipeline
+ 
+## Analysis workflow/pipeline
 
 The education analysis workflow is organised into four sequential and interdependent components:
 
@@ -40,7 +39,7 @@ The education analysis workflow is organised into four sequential and interdepen
 Each step depends on the successful execution of the previous one and should be run in the order listed above.
 The pipeline is metadata-driven: country-specific logic, variables, labels, and strata are controlled through configuration files rather than hard-coded logic.
 
-
+## Content of the Analysis structure
 ### Analysis Overview
 
 The analysis should be conducted at the individual level and can be divided into two main categories:<br>
