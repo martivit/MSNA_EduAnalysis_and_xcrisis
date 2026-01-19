@@ -842,7 +842,7 @@ c("0.392", "0.370")
 ```
 
 ```md
-![Duplicated values in PowerBI gender-wide table](docs/screenshots/duplicated_rows_powerbi.png)
+![Duplicated values in PowerBI gender-wide table](./docs/screenshots/duplicated_rows_powerbi.png)
 ```
 
 
