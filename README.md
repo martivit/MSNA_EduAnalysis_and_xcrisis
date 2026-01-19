@@ -13,6 +13,7 @@
    - [Import Labels](#5-Label-Data)
    - [Final output - I: Tables](#6-Create-Tables)
    - [Final output - II: Graphs](#7-Create-Graphs)
+4. [X-Crisis Analysis](#x-crisis-analysis)
 
  
 ## Analysis workflow/pipeline
@@ -321,7 +322,7 @@ source("src/05-01-make-graphs-and-maps-tables.R")
 
 ---
 
-# Education x-Crisis Global Analysis & PowerBI Dataset Preparation
+## X-Crisis Analysis
 
 > **Entry point:** `indicators_vizualization.R` (main orchestrator)   
 > **Scripts location:** `src/global_product/` (products) and `src/functions/` (shared logic / helpers) 
