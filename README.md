@@ -279,7 +279,7 @@ This includes:
   - education modality variables,
   - select-multiple barrier variables.
 - Only columns **not already present in `loop`** are merged to avoid overwriting.
-- **Important**: Do not forget to add these additional variables to *imput_tool/edu_analysistools_loa_starting_kit.xlsx*
+- **Important**: Do not forget to add these additional variables to *input_tool/edu_analysistools_loa_starting_kit.xlsx*
 
 ```r
 add_cols <- setdiff(wish, colnames(loop))
