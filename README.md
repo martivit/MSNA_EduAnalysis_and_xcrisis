@@ -232,7 +232,7 @@ if (!is.null(nonformal) && !is.na(nonformal)) {
     )
 }
 ```
-### B) Optional Washington Group Short Set (WG-SS) disability indicators
+#### B) Optional Washington Group Short Set (WG-SS) disability indicators
 
 If the MSNA includes all six WG-SS domains, the script generates disability indicators using:
 
@@ -263,7 +263,7 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
 ```
 
 
-### C) Country-specific variables merged from the main dataset
+#### C) Country-specific variables merged from the main dataset
 
 After indicator creation, additional variables are merged from `main` into `loop`.
 
@@ -271,7 +271,8 @@ This includes:
 - strata variables (admin levels, weights, strata),
 - country-specific education or protection variables required for reporting.
 
-### How this works
+**How this works**
+
 - Each country defines an `add_cols_tot` list of variables to pull from `main`.
 - Additional regex-based matches are added for:
   - education modality variables,
@@ -282,7 +283,8 @@ This includes:
 add_cols <- setdiff(wish, colnames(loop))
 ```
 
-#### Why this exists
+**Why this exists**
+
 These variables are **not required for core education indicators**, but may be needed for:
 - country snapshots,
 - cross-sector analysis,
@@ -290,7 +292,7 @@ These variables are **not required for core education indicators**, but may be n
 - country-specific indicators.
 
 
-### D) Country-specific derived disaggregation fields
+#### D) Country-specific derived disaggregation fields
 
 Some countries create derived disaggregation variables combining population group and indicators.
 
@@ -308,7 +310,7 @@ if (country_assessment == "MMR") {
 }
 ```
 
-### E) Country-specific sample restrictions
+#### E) Country-specific sample restrictions
 
 The final dataset is restricted to **school-age children**:
 
@@ -320,7 +322,7 @@ Additional rules may apply:
 - **AFG**: children aged exactly 5 are excluded from the final dataset.
 
 
-### Output:
+#### Output:
 The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
 
 ### Run Education Analysis
