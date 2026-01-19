@@ -10,6 +10,7 @@
    - [Install packages and source needed functions and data preparation](#install-packages-and-source-needed-functions-and-data-preparation)
    - [What must be configured before running](#what-must-be-configured-before-running)
    - [Add education indicators](#add-education-indicators)
+   - [Optional indicators and country-specific extensions](#optional-indicators-and-country-specific-extensions)
    - [Run education analysis](#run-education-analysis)
    - [Label data](#label-data)
    - [Create tables](#create-tables)
@@ -208,7 +209,7 @@ It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and a
 source('src/01-add_education_indicators.R')
 
 ```
-### Optional indicators and ad hoc parameters 
+### Optional indicators and country-specific extensions
 
 #### A) Optional non-formal / alternative education indicators (metadata-driven)
 
