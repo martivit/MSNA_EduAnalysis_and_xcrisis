@@ -7,7 +7,30 @@
 
 ## Content of the Analysis structure 
 
-### Analysis workflow
+### Analysis workflow/pipeline
+
+The education analysis workflow is organised into four sequential and interdependent components:
+
+1. **Single-country education analysis**  
+   It transforms clean MSNA household and education-loop data into:
+  - harmonized child-level education indicators,
+  - weighted estimates using a country-specific LOA,
+  - labelled, publication-ready tables,
+  - Excel outputs and figures used for Education PiN and severity analysis.  
+   This step is mandatory and constitutes the foundation of all subsequent analyses.
+
+2. **x-crisis analysis (global combined dataset and plots)**  
+   Aggregation of country-level outputs into a single cross-country dataset, enabling global comparisons, x-crisis visualizations, and standardized country snapshots.
+
+3. **PowerBI / dashboard dataset preparation**  
+   Transformation of global combined data into clean, flat, analysis-ready tables optimized for PowerBI dashboards and interactive exploration.
+
+4. **Dataset preparation for clustering (PiN workflow)**  
+   Construction of strictly filtered, admin-level datasets designed for PCA and clustering analyses supporting PiN severity workflows.
+
+Each step depends on the successful execution of the previous one and should be run in the order listed above.
+The pipeline is metadata-driven: country-specific logic, variables, labels, and strata are controlled through configuration files rather than hard-coded logic.
+
 
 ### Analysis Overview
 
@@ -45,7 +68,6 @@ For children in the **primary school-age** category (and similarly for older age
 -	*Net Attendance (adjusted) Rates*: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
 -	*Over-Age Attendance*: The percentage of school-aged children attending school who are at least two years older than the intended age for their grade, specifically at the primary school level.
 
-**All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
 
 #### **2. Analysis of Children Not Accessing Education, OoS**
 Two key dimensions are essential for this analysis: the out-of-school rate and the barriers preventing access to education.
@@ -53,7 +75,7 @@ Two key dimensions are essential for this analysis: the out-of-school rate and t
 - **Barriers to Education**: Identify the main barriers preventing children from attending school.
 
 #### **3. Additional analysis**
-- *non-formal education programs*
+- *non-formal education*
 - *disaggregation and analysis of WGS indicators*
 
 **All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
