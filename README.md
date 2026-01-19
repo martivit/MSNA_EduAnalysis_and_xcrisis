@@ -322,7 +322,7 @@ source("src/05-01-make-graphs-and-maps-tables.R")
 
 ---
 
-## X-Crisis Analysis
+# X-Crisis Analysis
 
 > **Entry point:** `indicators_vizualization.R` (main orchestrator)   
 > **Scripts location:** `src/global_product/` (products) and `src/functions/` (shared logic / helpers) 
@@ -337,9 +337,9 @@ The pipeline is **metadata-driven** via `input_global/metadata_edu_global.xlsx`,
 - indicators list and labels,
 - how to interpret population group / setting / admin disaggregation strings. 
 
----
 
-## 0) What a new analyst must understand before running anything
+
+## 0) Before running anything
 
 ### This pipeline is **not** a replacement for country education analysis
 It only works if the country pipeline has already produced, for each country:
@@ -351,7 +351,7 @@ If a country file is missing, that country will simply not be added to the globa
 ### The “source of truth” for comparability is the global metadata
 The global pipeline does not guess which indicators to use: it reads them from the metadata and uses the same list across countries. 
 
----
+
 
 ## 1) Repository structure and required files
 
@@ -378,22 +378,9 @@ Located in `src/functions/` and sourced by the main script:
 - `resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx` (school cycle mapping & age ranges) 
 - `output/analysis_key_output<COUNTRY>.csv` (one per country; produced upstream) 
 
----
 
-## 2) Installation / R environment requirements
 
-The main script loads a large set of packages including `tidyverse`, `readxl`, `openxlsx`, `officer`, `flextable`, `ggpattern`, `srvyr`, `showtext`. 
-
-Minimum practical requirements for a new analyst:
-- A working R installation where they can install packages
-- Ability to read/write `.xlsx`, `.csv`, `.jpeg`, and `.docx`
-- A system where custom fonts loading is not blocked (plots use `showtext` and font registration) 
-
-If fonts are missing (e.g., `segoeui.ttf`), plots can error. The plotting script explicitly calls `font_add` for Segoe UI. 
-
----
-
-## 3) How to run (the only supported way)
+## 2) How to run 
 
 ### Run the main script
 Open `indicators_vizualization.R` and run it top-to-bottom.  
@@ -418,11 +405,10 @@ It **sources** each script in the correct order and calls the key functions.
    `source("src/global_product/04_barrier_global.R")`  
    then `create_barrier_plot("overall")`, plus Boys and Girls variants 
 
----
 
-# PART I — Global x-Crisis Analysis & Visualisation
+## PART I — Global x-Crisis Analysis & Visualisation
 
-## 4) Global metadata: how countries and indicators are defined
+### 4) Global metadata: how countries and indicators are defined
 
 ### Script: `src/functions/functions_info_global.R`
 This script reads `input_global/metadata_edu_global.xlsx` and builds the global lists used everywhere. 
@@ -435,13 +421,13 @@ Key outputs created in memory (examples):
 
 It also creates keyword lists per country used to parse disaggregation strings (pop groups, admin, setting). 
 
-**For a new analyst:** if a country is not appearing in outputs, check:
+**Tips:** if a country is not appearing in outputs, check:
 1) metadata `availability`, and
 2) whether `output/analysis_key_output<COUNTRY>.csv` exists. 
 
 ---
 
-## 5) Global dataset build: binary + barrier data
+### 5) Global dataset build: binary + barrier data
 
 ### Script: `src/global_product/01_create_combined_dataset.R`
 This script is responsible for creating the canonical “global analysis tables” used for plots and snapshots. 
@@ -479,15 +465,15 @@ The script then produces `labeled_binary_indicator_data` by applying `process_co
 
 This is what allows the plotting script to rely on `group_var_value` containing consistent tokens like `level0`, `level1`, etc. 
 
-#### 5.5 Outputs written to disk
+#### 5.5 Outputs
 - `output/global/combined_data.csv`
 - `output/global/binary_indicator_data.csv`
 - `output/global/barrier_data.csv`
 - `output/global/labeled_binary_indicator_data.csv` 
 
----
 
-## 6) Global plots: binary indicators
+
+### 6) Global plots: binary indicators
 
 ### Script: `src/global_product/02_plot_binary_indicators.R`
 This script defines `generate_indicator_plot(...)` and the main script calls it 4 times: 
@@ -510,12 +496,12 @@ For each indicator in `indicator_list`:
 #### Plot labeling
 Plot titles come from `indicator_label_list[[indicator]]` (metadata-driven). 
 
----
 
-## 7) Country snapshots (Word)
+
+### 7) Country snapshots (Word)
 
 ### Script: `src/global_product/03_snapshot.R`
-The main script loops over `available_countries` and calls `generate_snapshot(country)` with `tryCatch` so one country failing does not stop the pipeline. 
+The main script loops over `available_countries` and calls `generate_snapshot(country)`. 
 
 The snapshot uses `officer` + `flextable` to assemble:
 - “Access to Education” table,
@@ -528,9 +514,9 @@ The snapshot uses `officer` + `flextable` to assemble:
 Output naming:
 - `output/global/docx/<COUNTRY>_snapshot.docx` 
 
----
 
-## 8) Global barrier plots
+
+### 8) Global barrier plots
 
 ### Script: `src/global_product/04_barrier_global.R`
 Defines `create_barrier_plot(group_plot, name_plot = "overall")`. 
@@ -555,9 +541,9 @@ Output naming:
 
 ---
 
-# PART II — PowerBI Dataset Preparation
+## PART II — PowerBI Dataset Preparation
 
-## 9) Why this part exists
+### 9) Why this part exists
 PowerBI dashboards require:
 - explicit dimensions (gender, school cycle, admin, pop group, setting),
 - consistent category labels across countries,
@@ -566,11 +552,13 @@ PowerBI dashboards require:
 
 This is why the pipeline produces **a separate PowerBI dataset suite** rather than reusing the plot datasets.
 
----
+**This part of the pipeline is less robust than the others and requires more changes and fixes. The examples below illustrate some of the issues that may occur, but be prepared for additional, potentially tedious work to resolve them.**
 
-## 10) PowerBI dataset construction
 
-### Script: `src/global_product/01_05_create_combined_dataset_powerBI.R`
+
+### 10) PowerBI dataset construction
+
+#### Script: `src/global_product/01_05_create_combined_dataset_powerBI.R`
 This script rebuilds a combined dataset from the same country CSVs but reshapes and standardises it for PowerBI. 
 
 #### 10.1 Input expectation
@@ -583,6 +571,66 @@ For each country:
 - Filters to keep only indicators in `indicator_list`
 - Excludes zeros and missing values (script has a filter to drop `analysis_var_value == 0` and NAs). 
 
+### 10.3 Metadata inputs used for PowerBI parsing (`metadata_edu_global.xlsx`)
+
+The PowerBI dataset preparation relies on **country-specific keyword lists** stored in  
+`input_global/metadata_edu_global.xlsx` and loaded by  
+`src/functions/functions_info_global.R`.
+
+The following sheets from `metadata_edu_global.xlsx` are used by the PowerBI pipeline:
+
+#### `general`
+Used to build:
+- `available_countries`: only countries where `availability == "yes"`
+- `country_language_list`: mapping between `country_assessment` and `language_assessment`
+
+#### `indicators`
+Used to build:
+- `indicator_list`: global whitelist of indicators retained in PowerBI datasets
+- `indicator_label_list`: mapping from technical indicator name to human-readable label  
+  (used to populate the `indicator` column in outputs)
+
+#### `strata_variables`
+Used to build parsing keywords for:
+- administrative disaggregation (`admin1_list`)
+- population group variable name (`pop_group_list`)
+- allowed / whitelisted disaggregation variables (`col1_list` … `col4_list`),  
+  used to filter `group_var` and validate token combinations
+
+#### `pop_group_names`
+Used to build country-specific population group keyword lists:
+- `host_list`
+- `idp_list`
+- `idp_host_list`
+- `idp_camp_list`
+- `ret_list`
+- `refugee_list`
+
+These keyword lists are used to detect and standardise population-group disaggregation in
+`group_var_value`.
+
+#### `setting_name`
+Used to build country-specific setting keyword lists:
+- `setting_list`
+- `urban_list`
+- `rural_list`
+- `camp_list`
+- `informal_list`
+- `other_setting_list`
+
+These keyword lists are used to standardise settlement / setting disaggregation.
+
+#### `variables`
+Used to load the original barrier variable name per country
+(`barrier_orginal_name_list`).
+
+In the PowerBI pipeline, barriers are subsequently harmonised using
+`input_global/barrier_label.csv`.
+
+**Important note:**  
+The sheet name `pop_group_string` is defined in the metadata but is **not used**
+by `process_metadata()` as currently implemented.
+
 #### 10.3 Parsing disaggregation strings using per-country keywords
 The script builds lookup tables from metadata lists:
 - `pop_lookup` from `pop_group_list`, `host_list`, `idp_list`, etc. 
@@ -594,15 +642,140 @@ Using `replace_if_found(...)`, it normalises tokens inside `group_var_value`, fo
 - `ADMIN` for admin disaggregation
 - `setting` for setting disaggregation 
 
-#### 10.4 Deriving explicit PowerBI dimensions
-From the normalised `group_var_value`, it derives:
-- `gender` (Overall / Girls / Boys) 
-- `school_cycle` (ECE / Primary / Intermediate-secondary / Secondary / Higher Education / No disaggregation) 
-- `pop_group` (mapped to human-readable labels) 
-- `setting` categories (urban/rural/camp/informal/other) 
-- `admin_info` extracted from tokens in `group_var_value` with `get_admin()` 
+
+### 10.4 Parsing and standardising population group, setting, and administrative disaggregation
+
+A core challenge for PowerBI is that `group_var` and `group_var_value` strings are
+**not consistent across countries**.
+
+This script standardises them using **metadata-driven keyword replacement**, ensuring
+cross-country comparability.
+
+#### Step 1 — Build lookup tables from metadata
+
+For each country, three lookup tables are constructed:
+
+##### `pop_lookup`
+Used to detect:
+- population group categories (IDP, host, refugees, returnees),
+- the country-specific admin variable name.
+
+Built from:
+- `strata_variables`: `pop_group` and `admin1`
+- `pop_group_names`: country-specific population group keyword lists
+
+##### `setting_lookup`
+Used to detect and standardise settlement / setting categories  
+(urban, rural, camp, informal, other).
+
+Built from:
+- `setting_name`
+
+##### `filter_lookup`
+Used as a **quality-control filter** to:
+- keep only approved disaggregation variables in `group_var`,
+- drop unexpected or invalid combinations of disaggregation tokens.
+
+Built from:
+- `strata_variables` (`col1_list` … `col4_list`)
+
+#### Step 2 — Standardise population-group tokens in `group_var_value`
+
+The script applies substring replacement using `replace_if_found()`.
+
+**Order matters** to avoid partial matches overriding more specific categories.
+The replacement is executed in the following order:
+
+1. Returnees keyword → `RET`
+2. IDP keyword → `IDP`
+3. IDP-host keyword → `IDP_HOST`
+4. IDP-camp keyword → `IDP_SITE`
+5. Host keyword → `HOST`
+6. Refugee keyword → `REFUGEE`
+
+At the same time, `group_var` itself is standardised:
+- if `group_var` contains the country-specific admin variable name → replaced by `ADMIN`
+- if `group_var` contains the country-specific population group variable name → replaced by `pop_group`
+
+This makes all downstream logic independent of country-specific variable names.
 
 ---
+
+#### Step 3 — Standardise setting tokens in `group_var_value`
+
+Using `setting_lookup`, the following replacements are applied:
+
+- “other setting” keyword → `OTHER SETTING`
+- rural keyword → `RURAL`
+- urban keyword → `URBAN/PERI-URBAN`
+- camp keyword → `CAMP/SITE`
+- informal keyword → `INFORMAL SITE`
+
+At the same time, `group_var` is standardised:
+- country-specific setting variable name → `setting`
+
+---
+
+#### Step 4 — Extract administrative codes (`admin_info`)
+
+Administrative information is derived **only** when `group_var == "ADMIN"`.
+
+The helper function `get_admin()`:
+- splits `group_var_value` on `%/%`,
+- extracts the first token matching a PCODE-like pattern (`^[A-Z]{2,}[0-9A-Z]*$`).
+
+This produces:
+- `admin_info = "<PCODE>"` for administrative disaggregation rows
+- `admin_info = "All-country"` for national-level rows
+
+---
+
+### 10.5 Deriving PowerBI dimensions (final harmonised fields)
+
+After standardisation, explicit PowerBI dimensions are derived from the cleaned
+disaggregation strings:
+
+#### `gender`
+- contains “Boys” → `Boys`
+- contains “Girls” → `Girls`
+- otherwise → `Overall`
+
+#### `school_cycle`
+- `level0` → ECE
+- `level1` → Primary
+- `level2` → Intermediate-secondary
+- `level3` → Secondary
+- `level4` → Higher Education
+- otherwise → No disaggregation
+
+#### `pop_group`
+Derived from standardised tokens:
+- `IDP_HOST` → IDP in host families
+- `IDP_SITE` → IDP in camp / site
+- `HOST` → Host community
+- `REFUGEE` → Refugees
+- `IDP` → IDP
+- `RET` → Returnees
+
+Project-specific categories (e.g. PRL / PRS, mixed-status households) are handled
+explicitly in the script.
+
+If `group_var == "pop_group"` but no known token is detected → `other`.  
+Otherwise → `No disaggregation`.
+
+#### `setting`
+- `RURAL` → Rural
+- `URBAN/PERI-URBAN` → Urban / peri-urban
+- `CAMP/SITE` → Camp / site
+- `INFORMAL SITE` → Informal site
+- `OTHER SETTING` → Other setting
+- otherwise → No setting disaggregation
+
+Finally, the dataset is filtered using `filter_lookup` rules so that **only approved
+disaggregation variables and valid token combinations** remain.
+
+This final filtering step is critical to prevent invalid or inconsistent
+disaggregations from entering PowerBI dashboards.
 
 ## 11) PowerBI outputs (what each file is for)
 
