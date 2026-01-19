@@ -898,7 +898,7 @@ In most cases, remove rows where:
 #### Step 4 — Re-run the pipeline
 
 ```r
-source("indicators_vizualization.R")
+source("01_05_create_combined_dataset_powerBI.R")
 ```
 
 Confirm that:
@@ -909,7 +909,6 @@ Confirm that:
 
 - PowerBI requires one value per dimension combination.
 - Automatic aggregation would hide data-quality issues.
-- Manual correction preserves transparency and traceability.
 
 This step is a **data validation checkpoint**, not a workaround.
 
@@ -918,24 +917,20 @@ This step is a **data validation checkpoint**, not a workaround.
 
 All PowerBI outputs are written in `output/global_pBI/`. 
 
-### 11.1 All indicators (long format)
-- `2024_MSNA_all_indicator_data.csv` and `.xlsx` 
+### For the dashboard
 
-**Use in PowerBI:** exploration, slicers, “all indicators” pages.  
-**One row means:** one `analysis_var` × one `analysis_var_value` × one disaggregation (gender/cycle/pop/setting/admin) × one country, with `stat_pct` and `n_total`.
-
-### 11.2 Binary indicators (long format)
-- `2024_MSNA_binary_indicator_data.csv` and `.xlsx` 
-
-**Use in PowerBI:** standard visuals for binary indicators (attending, net attendance, etc.).
-
-### 11.3 Binary indicators (gender-wide table)
 - `2024_MSNA_binary_only_gender.csv` and `.xlsx` 
 
 This table pivots gender to columns (e.g., `stat_pct_ind_overall`, `stat_pct_ind_girl`, `stat_pct_ind_boy`).   
 **Use in PowerBI:** faster gender comparison visuals without measures.
 
-### 11.4 Clustering dataset (binary only, strict filtering)
+Barrier tables (top 10 + “Other”)
+- `2024_MSNA_barrier_top10_indicator_data.csv/.xlsx` (top 10 per group + “Other”) 
+
+
+## 11) Outputs for clustering (HPC preparation) 
+
+### Clustering dataset (binary only, strict filtering)
 - `2024_MSNA_binary_clustering_data.csv` and `.xlsx` 
 
 Strict rules applied in code:
@@ -945,37 +940,9 @@ Strict rules applied in code:
 - Only a specific subset of `analysis_var` is kept for school-cycle-specific attendance, and ECE rules are enforced for the two ECE attendance vars. 
 - The table is pivoted wide: one row per `admin_info`, columns are indicators. 
 
-**Use:** PCA / clustering outside PowerBI or within PowerBI custom visuals.
 
----
 
-## 12) Barrier outputs for PowerBI (top-N and clustering)
-
-### 12.1 Barrier tables (top 10 + “Other”)
-- `2024_MSNA_barrier_indicator_data.csv/.xlsx` (full barrier table with `stat_pct`) 
-- `2024_MSNA_barrier_top10_indicator_data.csv/.xlsx` (top 10 per group + “Other”) 
-
-Harmonisation uses the same `barrier_label.csv` long mapping approach as Part I. 
-
-### 12.2 Barrier “top 1” for clustering + merged clustering dataset
-- `2024_MSNA_barrier_top1_indicator_data.csv/.xlsx` 
-- `2024_MSNA_combined_clustering_data.csv/.xlsx` (binary clustering + top barrier columns) 
-
-For the “top 1” barrier clustering table:
-- keeps admin-only, no disaggregation, and pivots to:
-  - `barrier_overall`, `barrier_boys`, `barrier_girls` columns. 
-
----
-
-## 13) Convenience Excel workbooks (PowerBI users)
-The PowerBI script also exports:
-- `2024_MSNA_binary_indicator_by_country.xlsx`
-- `2024_MSNA_barrier_indicator_by_country.xlsx`
-- `2024_MSNA_binary_indicator_by_each_indicator.xlsx` 
-
-These are “human browsing” outputs (not required for the dashboard model), created as:
-- one sheet per country, and
-- one sheet per indicator. 
+ 
 
 ---
 
