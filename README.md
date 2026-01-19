@@ -840,7 +840,7 @@ c("0.392", "0.370")
 ```
 
 
-![Duplicated values in PowerBI gender-wide table](https://github.com/martivit/MSNA_2024_EduAnalysis/blob/main/docs/screenshots/duplicated_rows_powerbi.png)
+![Duplicated](https://github.com/martivit/MSNA_2024_EduAnalysis/blob/main/docs/screenshots/duplicate_rows_powerbi.png)
 
 
 
@@ -882,7 +882,7 @@ Filter the CSV by:
 - identical `group_var_value`.
 
 
-![Duplicated rows in analysis_key_output CSV](https://github.com/martivit/MSNA_2024_EduAnalysis/blob/main/docs/screenshots/source_csv_issue.png)
+![ CSV](https://github.com/martivit/MSNA_2024_EduAnalysis/blob/main/docs/screenshots/source_cvs_issue.png)
 
 
 #### Step 3 — Remove the non-informative value
