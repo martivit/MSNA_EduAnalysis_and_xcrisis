@@ -203,10 +203,124 @@ The function processes the cleaned data by adding relevant education indicators.
 The function is defined in **01-add_education_indicators.R**. 
 
 It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and additional education functions defined in 00_edu_function.R
+
 ```
 source('src/01-add_education_indicators.R')
 
 ```
+### Optional indicators and ad hoc parameters 
+
+#### A) Optional non-formal / alternative education indicators (metadata-driven)
+
+If the MSNA includes questions on **non-formal or alternative education**, the pipeline conditionally generates
+additional indicators using:
+
+- `add_loop_edu_optional_nonformal_d()`
+
+This block runs **only if** the metadata provides a valid `nonformal` variable.
+
+```r
+if (!is.null(nonformal) && !is.na(nonformal)) {
+  loop <- loop |>
+    add_loop_edu_optional_nonformal_d(
+      edu_other_yn   = nonformal,
+      edu_other_type = nonformal_type,
+      pnta = pnta,
+      dnk  = dnk,
+      yes  = yes,
+      no   = no
+    )
+}
+```
+### B) Optional Washington Group Short Set (WG-SS) disability indicators
+
+If the MSNA includes all six WG-SS domains, the script generates disability indicators using:
+
+- `add_loop_wgq_ss()`
+
+This module runs only when **all six variables are present** in metadata.
+
+```r
+if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
+    !is.null(wsg_hearing) && !is.na(wsg_hearing) &&
+    !is.null(wsg_walking) && !is.na(wsg_walking) &&
+    !is.null(wsg_remembering) && !is.na(wsg_remembering) &&
+    !is.null(wsg_selfcare) && !is.na(wsg_selfcare) &&
+    !is.null(wsg_communicating) && !is.na(wsg_communicating)) {
+  loop <- loop |>
+    add_loop_wgq_ss(
+      ind_age = "edu_ind_age_corrected",
+      vision = wsg_seeing, hearing = wsg_hearing,
+      mobility = wsg_walking, cognition = wsg_remembering,
+      self_care = wsg_selfcare, communication = wsg_communicating,
+      no_difficulty = no_difficulty,
+      some_difficulty = some_difficulty,
+      lot_of_difficulty = lot_of_difficulty,
+      cannot_do = cannot_do,
+      undefined = c(dnk, pnta, "refused_to_answer")
+    )
+}
+```
+
+
+### C) Country-specific variables merged from the main dataset
+
+After indicator creation, additional variables are merged from `main` into `loop`.
+
+This includes:
+- strata variables (admin levels, weights, strata),
+- country-specific education or protection variables required for reporting.
+
+### How this works
+- Each country defines an `add_cols_tot` list of variables to pull from `main`.
+- Additional regex-based matches are added for:
+  - education modality variables,
+  - select-multiple barrier variables.
+- Only columns **not already present in `loop`** are merged to avoid overwriting.
+
+```r
+add_cols <- setdiff(wish, colnames(loop))
+```
+
+#### Why this exists
+These variables are **not required for core education indicators**, but may be needed for:
+- country snapshots,
+- cross-sector analysis,
+- narrative reporting,
+- country-specific indicators.
+
+
+### D) Country-specific derived disaggregation fields
+
+Some countries create derived disaggregation variables combining population group and indicators.
+
+Example (Myanmar):
+
+```r
+if (country_assessment == "MMR") {
+  loop <- loop %>%
+    mutate(
+      school_cycle_pop = paste(pop_group, edu_school_cycle_d, sep = "#"),
+      disagg_pop_wgq_dis_3 = paste(pop_group, wgq_dis_3, sep = "#"),
+      disagg_pop_wgq_dis_2 = paste(pop_group, wgq_dis_2, sep = "#"),
+      disagg_pop_access = paste(pop_group, edu_ind_access_d, sep = "#")
+    )
+}
+```
+
+### E) Country-specific sample restrictions
+
+The final dataset is restricted to **school-age children**:
+
+```r
+loop <- loop %>% filter(edu_ind_schooling_age_d == 1)
+```
+
+Additional rules may apply:
+- **AFG**: children aged exactly 5 are excluded from the final dataset.
+
+
+### Output:
 The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
 
 ### Run Education Analysis
