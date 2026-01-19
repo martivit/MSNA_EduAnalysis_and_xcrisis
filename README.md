@@ -552,7 +552,7 @@ PowerBI dashboards require:
 
 This is why the pipeline produces **a separate PowerBI dataset suite** rather than reusing the plot datasets.
 
-####**This part of the pipeline is less robust than the others and requires more changes and fixes. The examples below illustrate some of the issues that may occur, but be prepared for additional, potentially tedious work to resolve them.**
+#### **This part of the pipeline is less robust than the others and requires more changes and fixes. The examples below illustrate some of the issues that may occur, but be prepared for additional, potentially tedious work to resolve them.**
 
 
 
