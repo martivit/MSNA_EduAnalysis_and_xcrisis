@@ -2,37 +2,40 @@
 
 **Table of Contents**
 
+## Table of Contents
 
-1. [Analysis workflow / pipeline](#analysis-workflow--pipeline)
+1. [Analysis workflow / pipeline](#analysis-workflowpipeline)
 2. [Analysis overview](#analysis-overview)
 3. [Analysis implementation, single country](#analysis-implementation-single-country)
-   - [Repository structure](#0-repository-structure)
-   - [Install packages and load functions](#1-install-packages-and-load-functions)
-   - [What must be configured before running](#2-what-must-be-configured-before-running)
-   - [Add education indicators](#3-add-education-indicators)
-   - [Run education analysis](#4-run-education-analysis)
-   - [Label data](#5-label-data)
-   - [Final output I – tables](#6-create-tables)
-   - [Final output II – graphs](#7-create-graphs)
+   - [Repository structure](#repository-structure)
+   - [Install packages and source needed functions and data preparation](#install-packages-and-source-needed-functions-and-data-preparation)
+   - [What must be configured before running](#what-must-be-configured-before-running)
+   - [Add education indicators](#add-education-indicators)
+   - [Run education analysis](#run-education-analysis)
+   - [Label data](#label-data)
+   - [Create tables](#create-tables)
+   - [Create graphs](#create-graphs)
 4. [X-Crisis analysis](#x-crisis-analysis)
-   - [Before running anything](#0-before-running-anything)
-   - [Repository structure and required files](#1-repository-structure-and-required-files)
-   - [How to run](#2-how-to-run)
-   - [Global metadata](#4-global-metadata-how-countries-and-indicators-are-defined)
-   - [Global dataset build](#5-global-dataset-build-binary--barrier-data)
-   - [Global plots](#6-global-plots-binary-indicators)
-   - [Country snapshots](#7-country-snapshots-word)
-   - [Global barrier plots](#8-global-barrier-plots)
-5. [PowerBI dataset preparation](#part-ii--powerbi-dataset-preparation)
-   - [Why this part exists](#9-why-this-part-exists)
-   - [PowerBI dataset construction](#10-powerbi-dataset-construction)
-   - [Metadata inputs for PowerBI parsing](#103-metadata-inputs-used-for-powerbi-parsing-metadata_edu_globalxlsx)
-   - [Parsing disaggregation strings](#104-parsing-and-standardising-population-group-setting-and-administrative-disaggregation)
-   - [Deriving PowerBI dimensions](#105-deriving-powerbi-dimensions-final-harmonised-fields)
-   - [Troubleshooting example – gender pivot duplication](#troubleshooting-example--powerbi-gender-pivot-duplication)
-6. [Adding a new country](#14-adding-a-new-country-checklist)
-7. [General troubleshooting](#15-troubleshooting-what-usually-breaks)
-8. [Output map](#16-output-map-quick-reference)
+   - [Before running anything](#before-running-anything)
+   - [Repository structure and required files](#repository-structure-and-required-files)
+   - [How to run](#how-to-run)
+5. [PART I — Global x-Crisis Analysis & Visualisation](#part-i--global-x-crisis-analysis--visualisation)
+   - [Global metadata: how countries and indicators are defined](#global-metadata-how-countries-and-indicators-are-defined)
+   - [Global dataset build: binary + barrier data](#global-dataset-build-binary--barrier-data)
+   - [Global plots: binary indicators](#global-plots-binary-indicators)
+   - [Country snapshots (Word)](#country-snapshots-word)
+   - [Global barrier plots](#global-barrier-plots)
+6. [PART II — PowerBI Dataset Preparation](#part-ii--powerbi-dataset-preparation)
+   - [Why this part exists](#why-this-part-exists)
+   - [PowerBI dataset construction](#powerbi-dataset-construction)
+   - [Metadata inputs used for PowerBI parsing](#metadata-inputs-used-for-powerbi-parsing-metadata_edu_globalxlsx)
+   - [Parsing and standardising population group, setting, and administrative disaggregation](#parsing-and-standardising-population-group-setting-and-administrative-disaggregation)
+   - [Deriving PowerBI dimensions (final harmonised fields)](#deriving-powerbi-dimensions-final-harmonised-fields)
+   - [Troubleshooting example – PowerBI gender pivot duplication](#troubleshooting-example--powerbi-gender-pivot-duplication)
+7. [Outputs for dashboards and clustering](#outputs-for-dashboards-and-clustering)
+8. [Adding a new country (checklist)](#adding-a-new-country-checklist)
+9. [Troubleshooting (what usually breaks)](#troubleshooting-what-usually-breaks)
+10. [Output map (quick reference)](#output-map-quick-reference)
 
 
  
@@ -61,8 +64,8 @@ Each step depends on the successful execution of the previous one and should be 
 
 The pipeline is metadata-driven: country-specific logic, variables, labels, and strata are controlled through configuration files rather than hard-coded logic.
 
-## Content of the Analysis structure
-### Analysis Overview
+
+## Analysis Overview
 
 The analysis should be conducted at the individual level and can be divided into two main categories:<br>
 A. <span style="color:blue">**Children accessing education**</span>: Focus on their profiles and the challenges they face while attending school.<br>
@@ -115,13 +118,13 @@ Two key dimensions are essential for this analysis: the out-of-school rate and t
 
 ## Analysis Implementation, single country
 
-### 0. Repository structure 
+### Repository structure 
 
 This repository is designed to process and analyze educational data from various sources. It provides a systematic approach to adding indicators, running analyses, and generating tables for different educational metrics. The script is modular and can be adapted for different countries, datasets, and languages.
 
 The Main.R script and repository are organized to follow a systematic approach to process and analyze educational data. The structure is divided into several steps, each corresponding to specific functions or scripts that move the data from clean input to final analysis and output.
 
-### 1. Install packages and source needed functions and Data Preparation
+### Install packages and source needed functions and Data Preparation
 
 ```
 if(!require(devtools)) install.packages("devtools")
@@ -148,21 +151,21 @@ source('src/04-02-make-level-table.R')
 source('src/05-01-make-graphs-and-maps-tables.R')
 ```
 
-### 2. What must be configured before running
+### What must be configured before running
 
-#### 2.1 Country selection
+#### Country selection
 In the main script:
 ```r
 country_assessment <- "<ISO3>"
 ```
 
-#### 2.2 Metadata (mandatory)
+#### Metadata (mandatory)
 ```
 ../metadata_edu.xlsx
 ```
 Defines dataset paths, variables, strata, weights, and language.
 
-#### 2.3 Required inputs
+#### Required inputs
 - Country MSNA dataset (main + education loop)
 - ISCED mapping file
 - LOA template
@@ -180,7 +183,7 @@ kobo_path <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset
 Clean MSNA data → Indicators → LOA → Weighted analysis → Labelling → Tables & figures
 
 
-### 3. Add Education Indicators
+### Add Education Indicators
 The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
 
 - Access 
@@ -207,7 +210,7 @@ source('src/01-add_education_indicators.R')
 ```
 The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
 
-### 4. Run Education Analysis
+### Run Education Analysis
 
 This function runs the analysis based on the data with the added indicators. It includes generating summary statistics and applying filters based on predefined variables and thresholds.
 
@@ -220,7 +223,7 @@ source('src/02-education_analysis.R')
 ```
 The output is saved here: *output/grouped_other_education_results_loop.RDS*
 
-### 5. Label Data
+### Label Data
 
 After running the analysis, this function ensures that the correct labels are applied to the indicators for easy interpretation. It converts technical names into user-friendly labels according to the KOBO survey and choices and the edu_indicator_labeling.xlsx
 This labeling step is crucial for aligning the analysis output with the desired format for reporting and visualization, ensuring consistency across the dataset and tables.
@@ -233,7 +236,7 @@ source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.R
 ```
 The output is saved here: *output/labeled_results_table.RDS  ---- df: education_results_table_labelled*
 
-### 6. Create Tables 
+### Create Tables 
 First create workbook for tables
 ```
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
@@ -307,7 +310,7 @@ A workbook is created using openxlsx, which consolidates all the tables and anal
 
 It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
 
-### 7. Create Graphs 
+### Create Graphs 
 ```
 tab_helper <- "access"
 results_filtered <- "output/rds_results/access_results.rds"
@@ -359,7 +362,7 @@ The pipeline is **metadata-driven** via `input_global/metadata_edu_global.xlsx`,
 
 
 
-## 0) Before running anything
+## Before running anything
 
 ### This pipeline is **not** a replacement for country education analysis
 It only works if the country pipeline has already produced, for each country:
@@ -373,7 +376,7 @@ The global pipeline does not guess which indicators to use: it reads them from t
 
 
 
-## 1) Repository structure and required files
+## Repository structure and required files
 
 ### Main script
 - `indicators_vizualization.R` (sources everything and launches products) 
@@ -400,7 +403,7 @@ Located in `src/functions/` and sourced by the main script:
 
 
 
-## 2) How to run 
+## How to run 
 
 ### Run the main script
 Open `indicators_vizualization.R` and run it top-to-bottom.  
@@ -428,7 +431,7 @@ It **sources** each script in the correct order and calls the key functions.
 
 ## PART I — Global x-Crisis Analysis & Visualisation
 
-### 4) Global metadata: how countries and indicators are defined
+### Global metadata: how countries and indicators are defined
 
 ### Script: `src/functions/functions_info_global.R`
 This script reads `input_global/metadata_edu_global.xlsx` and builds the global lists used everywhere. 
@@ -447,12 +450,12 @@ It also creates keyword lists per country used to parse disaggregation strings (
 
 
 
-### 5) Global dataset build: binary + barrier data
+### Global dataset build: binary + barrier data
 
 ### Script: `src/global_product/01_create_combined_dataset.R`
 This script is responsible for creating the canonical “global analysis tables” used for plots and snapshots. 
 
-#### 5.1 Input expectation
+#### Input expectation
 For each country in `available_countries`, it looks for:
 - `output/analysis_key_output<COUNTRY>.csv` 
 
@@ -463,18 +466,18 @@ It reads and keeps (minimum):
 - `n_total`
 - adds `country` 
 
-#### 5.2 Standardisation step (critical)
+#### Standardisation step (critical)
 Before filtering, it normalises “equivalent” indicator names to a single target name (to support cross-country comparability). 
 
 Example: multiple attendance variables collapse into `edu_attending_level1234_and_level1_age_d` etc. 
 
-#### 5.3 Binary vs barrier split
+#### Binary vs barrier split
 - **Binary indicators**: keep rows where `analysis_var` is in `indicator_list`, exclude `edu_barrier_d`, and keep only `analysis_var_value == 1`. 
 - **Barrier indicators**: keep only `analysis_var == "edu_barrier_d"`. 
 
 Gender labels are harmonised from French to English (`Filles`→`Girls`, `Garcons`→`Boys`). 
 
-#### 5.4 Country-specific relabeling using ISCED mappings
+#### Country-specific relabeling using ISCED mappings
 The script then produces `labeled_binary_indicator_data` by applying `process_country()` for each country. 
 
 `process_country()`:
@@ -485,7 +488,7 @@ The script then produces `labeled_binary_indicator_data` by applying `process_co
 
 This is what allows the plotting script to rely on `group_var_value` containing consistent tokens like `level0`, `level1`, etc. 
 
-#### 5.5 Outputs
+#### Outputs
 - `output/global/combined_data.csv`
 - `output/global/binary_indicator_data.csv`
 - `output/global/barrier_data.csv`
@@ -493,7 +496,7 @@ This is what allows the plotting script to rely on `group_var_value` containing 
 
 
 
-### 6) Global plots: binary indicators
+### Global plots: binary indicators
 
 ### Script: `src/global_product/02_plot_binary_indicators.R`
 This script defines `generate_indicator_plot(...)` and the main script calls it 4 times: 
@@ -518,7 +521,7 @@ Plot titles come from `indicator_label_list[[indicator]]` (metadata-driven).
 
 
 
-### 7) Country snapshots (Word)
+### Country snapshots (Word)
 
 ### Script: `src/global_product/03_snapshot.R`
 The main script loops over `available_countries` and calls `generate_snapshot(country)`. 
@@ -536,7 +539,7 @@ Output naming:
 
 
 
-### 8) Global barrier plots
+### Global barrier plots
 
 ### Script: `src/global_product/04_barrier_global.R`
 Defines `create_barrier_plot(group_plot, name_plot = "overall")`. 
@@ -563,7 +566,7 @@ Output naming:
 
 ## PART II — PowerBI Dataset Preparation
 
-### 9) Why this part exists
+### Why this part exists
 PowerBI dashboards require:
 - explicit dimensions (gender, school cycle, admin, pop group, setting),
 - consistent category labels across countries,
@@ -576,22 +579,22 @@ This is why the pipeline produces **a separate PowerBI dataset suite** rather th
 
 
 
-### 10) PowerBI dataset construction
+### PowerBI dataset construction
 
 #### Script: `src/global_product/01_05_create_combined_dataset_powerBI.R`
 This script rebuilds a combined dataset from the same country CSVs but reshapes and standardises it for PowerBI. 
 
-#### 10.1 Input expectation
+#### Input expectation
 For each country:
 - reads `output/analysis_key_output<COUNTRY>.csv`
 - keeps: `analysis_var`, `analysis_var_value`, `group_var`, `group_var_value`, `stat`, `n_total` 
 
-#### 10.2 Indicator filtering + standardisation
+#### Indicator filtering + standardisation
 - Standardises “equivalent” attendance variables similarly to Part I. 
 - Filters to keep only indicators in `indicator_list`
 - Excludes zeros and missing values (script has a filter to drop `analysis_var_value == 0` and NAs). 
 
-### 10.3 Metadata inputs used for PowerBI parsing (`metadata_edu_global.xlsx`)
+#### Metadata inputs used for PowerBI parsing (`metadata_edu_global.xlsx`)
 
 The PowerBI dataset preparation relies on **country-specific keyword lists** stored in  
 `input_global/metadata_edu_global.xlsx` and loaded by  
@@ -650,7 +653,7 @@ In the PowerBI pipeline, barriers are subsequently harmonised using
 The sheet name `pop_group_string` is defined in the metadata but is **not used**
 by `process_metadata()` as currently implemented.
 
-#### 10.3 Parsing disaggregation strings using per-country keywords
+#### Parsing disaggregation strings using per-country keywords
 The script builds lookup tables from metadata lists:
 - `pop_lookup` from `pop_group_list`, `host_list`, `idp_list`, etc. 
 - `setting_lookup` from `setting_list`, `urban_list`, `rural_list`, etc. 
@@ -662,7 +665,7 @@ Using `replace_if_found(...)`, it normalises tokens inside `group_var_value`, fo
 - `setting` for setting disaggregation 
 
 
-### 10.4 Parsing and standardising population group, setting, and administrative disaggregation
+#### Parsing and standardising population group, setting, and administrative disaggregation
 
 A core challenge for PowerBI is that `group_var` and `group_var_value` strings are
 **not consistent across countries**.
@@ -749,7 +752,7 @@ This produces:
 
 ---
 
-### 10.5 Deriving PowerBI dimensions (final harmonised fields)
+#### Deriving PowerBI dimensions (final harmonised fields)
 
 After standardisation, explicit PowerBI dimensions are derived from the cleaned
 disaggregation strings:
@@ -797,7 +800,7 @@ This final filtering step is critical to prevent invalid or inconsistent
 disaggregations from entering PowerBI dashboards.
 
 
-## Troubleshooting Example – PowerBI Gender Pivot Duplication
+### Troubleshooting Example – PowerBI Gender Pivot Duplication
 
 This section documents a **common PowerBI preparation issue** encountered during the
 creation of the gender-wide binary indicator table
@@ -933,7 +936,7 @@ Confirm that:
 This step is a **data validation checkpoint**, not a workaround.
 
 
-## 11) PowerBI outputs (what each file is for)
+## Outputs for dashboards and clustering
 
 All PowerBI outputs are written in `output/global_pBI/`. 
 
@@ -947,8 +950,6 @@ This table pivots gender to columns (e.g., `stat_pct_ind_overall`, `stat_pct_ind
 Barrier tables (top 10 + “Other”)
 - `2024_MSNA_barrier_top10_indicator_data.csv/.xlsx` (top 10 per group + “Other”) 
 
-
-## 11) Outputs for clustering (HPC preparation) 
 
 ### Clustering dataset (binary only, strict filtering)
 - `2024_MSNA_binary_clustering_data.csv` and `.xlsx` 
@@ -966,7 +967,7 @@ Strict rules applied in code:
 
 ---
 
-## 14) Adding a new country (checklist)
+## Adding a new country (checklist)
 
 A new analyst should follow this exact checklist:
 
@@ -990,7 +991,7 @@ A new analyst should follow this exact checklist:
 
 ---
 
-## 15) Troubleshooting (what usually breaks)
+## Troubleshooting (what usually breaks)
 
 ### Country missing from outputs
 - Check metadata `availability == "yes"` and that the country appears in `available_countries`. 
@@ -1009,7 +1010,7 @@ A new analyst should follow this exact checklist:
 
 ---
 
-## 16) Output map (quick reference)
+## Output map (quick reference)
 
 ### Global plots / docs
 - `output/global/binary_indicator_data.csv` 
