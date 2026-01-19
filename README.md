@@ -830,7 +830,7 @@ pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %
 #### 3.1 Console warning
 
 ```md
-![Pivot warning due to duplicated values](./docs/screenshots/pivot_warning.png)
+<img src="./docs/screenshots/pivot_warning.png" width="900">
 ```
 
 #### 3.2 Output table symptom
