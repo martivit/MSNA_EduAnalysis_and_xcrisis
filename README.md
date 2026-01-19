@@ -2,7 +2,8 @@
 
 **Table of Contents**
 
-1. [Analysis Overview](#analysis-overview)
+1. [Analysis workflow/pipeline](#analysis-workflow/pipeline)
+2. [Analysis Overview](#analysis-overview)
 
 
 ## Content of the Analysis structure 
