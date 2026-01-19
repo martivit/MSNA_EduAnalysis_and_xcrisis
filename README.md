@@ -1,5 +1,63 @@
 # Education MSNA Analysis Pipeline
 
+**Table of Contents**
+
+1. [Analysis Overview](#analysis-overview)
+
+
+## Content of the Analysis structure 
+
+### Analysis workflow
+
+### Analysis Overview
+
+The analysis should be conducted at the individual level and can be divided into two main categories:<br>
+A. <span style="color:blue">**Children accessing education**</span>: Focus on their profiles and the challenges they face while attending school.<br>
+B. <span style="color:blue">**Children not accessing education – Out-of-school (OSC)**</span>: Focus on identifying the main barriers preventing their access.<br><br>
+
+#### **1. Analysis of Children Accessing Education**
+Two key dimensions are essential for this analysis: access to education and the impact of significant events on education during the school year.<br>
+
+- **Access to education**: Analyse the percentage of children aged 5 to 17 who attended school or any early childhood education program at any time during the 202x-202x+1 school year.
+
+- **Education disruption**: Assess whether any significant events disrupted education during the school year, with a focus on factors such as:
+
+  - Natural hazards (e.g., floods, cyclones, droughts, wildfires, earthquakes)
+  - Teacher absences
+  - Schools being used as shelters for displaced persons
+  - Direct attack on education / Schools occupied by armed forces or non-state armed groups (if applicable in your MSNA)
+
+##### Sub-School-Age Categories Analysis
+The analysis should account for sub-school-age categories to capture more detailed insights into access to education. These categories can be broken down as follows:<br>
+
+-	**5-year-olds**: one year before the official primary school entry age.
+-	**Primary/intermediate/secondary School Age**: Children who fall within the age range for primary school. Key areas of analysis include access to education, net attendance rates,net attendance (adjusted) rates and over-age attendance (see below).
+
+
+Breaking down the important dimension by school-age category:<br>
+For **5-year-old** children, analysis should focus on the already mentioned access, disruption, and additionally Early Childhood Education indicators:
+
+-	*ECE Access*: Participation rate in organized learning (one year before the official primary entry age). This refers to the percentage of children attending an early childhood education program or primary school.
+-	*Early Enrolment in Primary Grades*: The percentage of children one year before the official primary school entry age attending primary school.
+
+For children in the **primary school-age** category (and similarly for older age groups), access and disruption can be analysed along with:
+
+-	*Net Attendance (adjusted) Rates*: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
+-	*Over-Age Attendance*: The percentage of school-aged children attending school who are at least two years older than the intended age for their grade, specifically at the primary school level.
+
+**All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
+
+#### **2. Analysis of Children Not Accessing Education, OoS**
+Two key dimensions are essential for this analysis: the out-of-school rate and the barriers preventing access to education.
+- **Out-of-School Rate**: Analyse the percentage of school-aged children who are not attending any level of education.
+- **Barriers to Education**: Identify the main barriers preventing children from attending school.
+
+#### **3. Additional analysis**
+- *non-formal education programs*
+- *disaggregation and analysis of WGS indicators*
+
+**All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
+
 ## 1. Purpose
 This pipeline produces education sector analytical outputs from MSNA data, aligned with MSNA education modules, UNESCO ISCED school structures, and HPC/HNO reporting requirements.
 
