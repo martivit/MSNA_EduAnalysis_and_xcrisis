@@ -1,6 +1,5 @@
 # Education MSNA Analysis Pipeline
 
-**Table of Contents**
 
 ## Table of Contents
 

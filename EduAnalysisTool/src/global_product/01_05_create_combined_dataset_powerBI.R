@@ -64,6 +64,29 @@ for (country in available_countries) {
 # Combine all data frames into one
 pBI_combined_data <- bind_rows(pBI_all_data)
 
+invalid_group_value_patterns <- c(
+  # short codes
+  "\\bpnta\\b", "\\bdnk\\b", "\\bpnpr\\b", "\\bnsp\\b",
+  
+  # English
+  "Prefer not to answer", "Prefer not to Answer",
+  "Don't know", "Don’t know", "Do not know",
+  "Prefer_not_to_answer", "prefer_not_to_answer",
+  "do_not_know", "Don't Know", "Don’t Know",
+  
+  # French (if it appears in some exports)
+  "Ne sait pas", "Refus", "Préfère ne pas répondre", "Preferer ne pas repondre",
+  
+  # numbered choice label variants
+  "^\\s*\\d+\\.?\\s*Prefer not to answer\\s*$",
+  "^\\s*\\d+\\.?\\s*Do not know\\s*$",
+  "^\\s*\\d+\\.?\\s*Don.?t know\\s*$"
+)
+invalid_group_value_regex <- paste(invalid_group_value_patterns, collapse = "|")
+
+pBI_combined_data <- pBI_combined_data %>%
+  filter(!str_detect(tolower(group_var_value), invalid_group_value_regex))
+
 # Filter data for rows where analysis_var is in the indicators_list (excluding edu_barrier_d)
 pBI_indicator_data <- pBI_combined_data %>%
   mutate(analysis_var = str_replace_all(analysis_var, c("edu_attending_level123_and_level1_age_d" = "edu_attending_level1234_and_level1_age_d",
