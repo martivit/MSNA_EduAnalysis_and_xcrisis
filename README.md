@@ -37,6 +37,7 @@ The education analysis workflow is organised into four sequential and interdepen
    Construction of strictly filtered, admin-level datasets designed for PCA and clustering analyses supporting PiN severity workflows.
 
 Each step depends on the successful execution of the previous one and should be run in the order listed above.
+
 The pipeline is metadata-driven: country-specific logic, variables, labels, and strata are controlled through configuration files rather than hard-coded logic.
 
 ## Content of the Analysis structure
@@ -89,6 +90,7 @@ Two key dimensions are essential for this analysis: the out-of-school rate and t
 **All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
 
 
+---
 
 ## Analysis Implementation, single country
 
@@ -125,21 +127,21 @@ source('src/04-02-make-level-table.R')
 source('src/05-01-make-graphs-and-maps-tables.R')
 ```
 
-## 2. What must be configured before running
+### 2. What must be configured before running
 
-### 2.1 Country selection
+#### 2.1 Country selection
 In the main script:
 ```r
 country_assessment <- "<ISO3>"
 ```
 
-### 2.2 Metadata (mandatory)
+#### 2.2 Metadata (mandatory)
 ```
 ../metadata_edu.xlsx
 ```
 Defines dataset paths, variables, strata, weights, and language.
 
-### 2.3 Required inputs
+#### 2.3 Required inputs
 - Country MSNA dataset (main + education loop)
 - ISCED mapping file
 - LOA template
@@ -152,9 +154,8 @@ path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.x
 data_file <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
 kobo_path <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
 ```
----
 
-### Conceptual workflow
+#### Conceptual workflow
 Clean MSNA data → Indicators → LOA → Weighted analysis → Labelling → Tables & figures
 
 
@@ -233,7 +234,7 @@ row_number_lookup <- c(
 
 ```
 
-#### Create **Analysis of Children Accessing Education** 
+##### Create **Analysis of Children Accessing Education** 
 
 It generates a table showing data on disruptions to education (e.g., due to teacher absence, school occupation, hazards).
 ```
@@ -245,7 +246,7 @@ It generates a table showing data on overaged learners.
 tab_helper <- "overaged"
 source("src/04-01-make-table-access-overaged-barriers.R")
 ```
-#### Create **Analysis of Children Not Accessing Education, OoS** 
+##### Create **Analysis of Children Not Accessing Education, OoS** 
 
 IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_table_helper_FR.xlsx.  
 ```
@@ -253,7 +254,7 @@ tab_helper <- "out_of_school"
 source("src/04-01-make-table-access-overaged-barriers.R")
 ```
 
-#### Create **Early childhood education and early enrolment** 
+##### Create **Early childhood education and early enrollment** 
 
 It generates a table specifically for indicators related to children one year before they reach the age to start primary school.
 ```
@@ -261,7 +262,7 @@ tab_helper <- "ece"
 source("src/04-02-make-level-table.R")
 ```
 
-#### Create **School Attendance Profile** 
+##### Create **School Attendance Profile** 
 
 To repeat according to the number of levels (except ECE) in the country's school system
 
