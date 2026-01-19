@@ -310,14 +310,6 @@ pBI_barrier_indicator_data <- pBI_indicator_data %>%
 
 
 pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data
-# pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data %>% 
-#   filter(
-#     admin_info == "All-country",
-#     pop_group  == "No disaggregation",
-#     setting    == "No setting disaggregation"
-#   ) %>% 
-#   select(-admin_info, -pop_group, -setting) 
-
 pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %>%                                    
   # 1) map the three gender strings to the *column* names you want
   mutate(gender_col = case_when(
@@ -334,7 +326,7 @@ pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %
     values_from = c(stat_pct, n_total),
     names_glue = "{.value}_{gender_col}"
   )
-# pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %>%                                    # ← your input tibble
+# pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %>%                                    
 #   # 1) map the three gender strings to the *column* names you want
 #   mutate(gender_col = case_when(
 #     gender == "Overall" ~ "ind_overall",

@@ -627,7 +627,6 @@ Used to load the original barrier variable name per country
 In the PowerBI pipeline, barriers are subsequently harmonised using
 `input_global/barrier_label.csv`.
 
-**Important note:**  
 The sheet name `pop_group_string` is defined in the metadata but is **not used**
 by `process_metadata()` as currently implemented.
 
@@ -699,7 +698,7 @@ At the same time, `group_var` itself is standardised:
 
 This makes all downstream logic independent of country-specific variable names.
 
----
+
 
 #### Step 3 — Standardise setting tokens in `group_var_value`
 
@@ -714,7 +713,7 @@ Using `setting_lookup`, the following replacements are applied:
 At the same time, `group_var` is standardised:
 - country-specific setting variable name → `setting`
 
----
+
 
 #### Step 4 — Extract administrative codes (`admin_info`)
 
@@ -776,6 +775,146 @@ disaggregation variables and valid token combinations** remain.
 
 This final filtering step is critical to prevent invalid or inconsistent
 disaggregations from entering PowerBI dashboards.
+
+
+### Troubleshooting Example – PowerBI Gender Pivot Duplication
+
+This section documents a **common PowerBI preparation issue** encountered during the
+creation of the gender-wide binary indicator table
+(`pBI_binary_indicator_data_only_gender`) and explains how to identify, understand,
+and fix it.
+
+
+### 1. Problem description
+
+During execution of `01_05_create_combined_dataset_powerBI.R`, the following warning
+may appear in the R console:
+
+```text
+Values from `n_total` and `stat_pct` are not uniquely identified;
+output will contain list-cols.
+```
+
+This warning means that **more than one value exists for the same combination of
+PowerBI dimensions**, causing `pivot_wider()` to create list-columns instead of numeric
+columns.
+
+This breaks PowerBI compatibility.
+
+
+
+### 2. Where the issue occurs in the code
+
+The issue arises during the reshaping of binary indicators from long to wide format:
+
+```r
+pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %>%
+  mutate(gender_col = case_when(
+    gender == "Overall" ~ "ind_overall",
+    gender == "Girls"   ~ "ind_girl",
+    gender == "Boys"    ~ "ind_boy",
+    TRUE                ~ NA_character_
+  )) %>%
+  pivot_wider(
+    id_cols = c(country, analysis_var, school_cycle, indicator,
+                admin_info, pop_group, setting),
+    names_from = gender_col,
+    values_from = c(stat_pct, n_total),
+    names_glue = "{.value}_{gender_col}"
+  )
+```
+
+
+### 3. How the issue manifests
+
+#### 3.1 Console warning
+
+```md
+![Pivot warning due to duplicated values](docs/screenshots/pivot_warning.png)
+```
+
+#### 3.2 Output table symptom
+
+In the resulting PowerBI table, numeric columns may contain multiple values, for example:
+
+```
+c("0.392", "0.370")
+```
+
+```md
+![Duplicated values in PowerBI gender-wide table](docs/screenshots/duplicated_rows_powerbi.png)
+```
+
+
+### 4. Root cause
+
+This issue is **not a code bug**.
+
+It occurs when the source country file  
+`analysis_key_output<COUNTRY>.csv` contains **two rows that collapse into the same
+PowerBI grouping**.
+
+Typical causes include:
+- duplicated indicator rows for the same disaggregation,
+- the presence of a non-informative response category (e.g. `dnk`)
+  alongside a valid estimate.
+
+
+### 5. How to identify the problematic country
+
+From the warning or the PowerBI table:
+- identify the affected `country` (e.g. `SOM`),
+- identify the problematic `analysis_var`.
+
+
+### 6. How to fix the issue (manual but controlled)
+
+#### Step 1 — Open the source file
+
+```
+output/analysis_key_outputSOM.csv
+```
+
+
+#### Step 2 — Locate duplicated rows
+
+Filter the CSV by:
+- `analysis_var`,
+- identical `group_var`,
+- identical `group_var_value`.
+
+```md
+![Duplicated rows in analysis_key_output CSV](docs/screenshots/source_csv_issue.png)
+```
+
+#### Step 3 — Remove the non-informative value
+
+In most cases, remove rows where:
+- `analysis_var_value == "dnk"` (or equivalent non-response category).
+
+**Rules**:
+- Only remove analytically invalid categories.
+- Never remove valid estimates.
+
+
+#### Step 4 — Re-run the pipeline
+
+```r
+source("indicators_vizualization.R")
+```
+
+Confirm that:
+- the warning no longer appears,
+- PowerBI tables contain numeric values only.
+
+### 7. Why this fix is intentional
+
+- PowerBI requires one value per dimension combination.
+- Automatic aggregation would hide data-quality issues.
+- Manual correction preserves transparency and traceability.
+
+This step is a **data validation checkpoint**, not a workaround.
+
 
 ## 11) PowerBI outputs (what each file is for)
 
