@@ -777,7 +777,7 @@ This final filtering step is critical to prevent invalid or inconsistent
 disaggregations from entering PowerBI dashboards.
 
 
-### Troubleshooting Example – PowerBI Gender Pivot Duplication
+## Troubleshooting Example – PowerBI Gender Pivot Duplication
 
 This section documents a **common PowerBI preparation issue** encountered during the
 creation of the gender-wide binary indicator table
@@ -830,7 +830,7 @@ pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %
 #### 3.1 Console warning
 
 ```md
-![Pivot warning due to duplicated values](docs/screenshots/pivot_warning.png)
+![Pivot warning due to duplicated values](./docs/screenshots/pivot_warning.png)
 ```
 
 #### 3.2 Output table symptom
