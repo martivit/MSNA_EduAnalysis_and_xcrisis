@@ -830,7 +830,7 @@ pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %
 #### 3.1 Console warning
 
 ```md
-![Pivot warning due to duplicated values](../docs/screenshots/pivot_warning.png)
+![Pivot warning due to duplicated values](./docs/screenshots/pivot_warning.png)
 ```
 
 #### 3.2 Output table symptom
@@ -842,7 +842,7 @@ c("0.392", "0.370")
 ```
 
 ```md
-![Duplicated values in PowerBI gender-wide table](./docs/screenshots/duplicated_rows_powerbi.png)
+![Duplicated values in PowerBI gender-wide table](docs/screenshots/duplicated_rows_powerbi.png)
 ```
 
 
