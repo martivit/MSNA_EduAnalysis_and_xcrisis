@@ -829,7 +829,7 @@ pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %
 
 #### 3.1 Console warning
 
-https://github.com/martivit/MSNA_2024_EduAnalysis/blob/main/docs/screenshots/pivot_warning.png
+![issue](https://github.com/martivit/MSNA_2024_EduAnalysis/blob/main/docs/screenshots/pivot_warning.png)
 
 #### 3.2 Output table symptom
 
