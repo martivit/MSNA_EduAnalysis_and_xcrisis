@@ -13,10 +13,10 @@ The education analysis workflow is organised into four sequential and interdepen
 
 1. **Single-country education analysis**  
    It transforms clean MSNA household and education-loop data into:
-  - harmonized child-level education indicators,
-  - weighted estimates using a country-specific LOA,
-  - labelled, publication-ready tables,
-  - Excel outputs and figures used for Education PiN and severity analysis.  
+    - harmonized child-level education indicators,
+    - weighted estimates using a country-specific LOA,
+    - labelled, publication-ready tables,
+    - Excel outputs and figures used for Education PiN and severity analysis.  
    This step is mandatory and constitutes the foundation of all subsequent analyses.
 
 2. **x-crisis analysis (global combined dataset and plots)**  
