@@ -2,9 +2,17 @@
 
 **Table of Contents**
 
-1. [Analysis workflow/pipeline](#analysis-workflow/pipeline)
+1. [Analysis workflow/pipeline](#analysis-workflowpipeline)
 2. [Analysis Overview](#analysis-overview)
-
+3. [Analysis Implementation, single country](#analysis-implementation-single-country)
+   - [Repository structure](#0-Repository-structure)
+   - [Install functions and load Data](#1-Install-functions-and-load-Data)
+   - [What must be configured before running](2-What-must-be-configured-before-running)
+   - [Add Education Indicators](#3-Add-Education-Indicators)
+   - [Run Education Analysis](#4-Run-Education-Analysis)
+   - [Import Labels](#5-Label-Data)
+   - [Final output - I: Tables](#6-Create-Tables)
+   - [Final output - II: Graphs](#7-Create-Graphs)
 
 ## Content of the Analysis structure 
 
@@ -81,18 +89,42 @@ Two key dimensions are essential for this analysis: the out-of-school rate and t
 
 **All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
 
-## 1. Purpose
-This pipeline produces education sector analytical outputs from MSNA data, aligned with MSNA education modules, UNESCO ISCED school structures, and HPC/HNO reporting requirements.
 
-It transforms raw MSNA household and education-loop data into:
-- harmonised child-level education indicators,
-- weighted estimates using a country-specific LOA,
-- labelled, publication-ready tables,
-- Excel outputs and figures used for Education PiN and severity analysis.
 
-The pipeline is metadata-driven: country-specific logic, variables, labels, and strata are controlled through configuration files rather than hard-coded logic.
+## Analysis Implementation, single country
 
----
+### 0. Repository structure 
+
+This repository is designed to process and analyze educational data from various sources. It provides a systematic approach to adding indicators, running analyses, and generating tables for different educational metrics. The script is modular and can be adapted for different countries, datasets, and languages.
+
+The Main.R script and repository are organized to follow a systematic approach to process and analyze educational data. The structure is divided into several steps, each corresponding to specific functions or scripts that move the data from clean input to final analysis and output.
+
+### 1. Install packages and source needed functions and Data Preparation
+
+```
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("impact-initiatives-hppu/humind")
+devtools::install_github("impact-initiatives/analysistools")
+devtools::install_github("impact-initiatives/presentresults")
+
+library(humind) 
+library(analysistools)
+library(presentresults)
+```
+##### Additional functions 
+```
+source ('src/functions/00_edu_helper.R')
+source ('src/functions/00_edu_function.R')
+source("src/functions/create_education_table_group_x_var.R")
+source("src/functions/create_education_xlsx_table.R")
+
+source('src/01-add_education_indicators.R')
+source('src/02-education_analysis.R')
+source('src/03-education_labeling.R')
+source('src/04-01-make-table-access-overaged-barriers.R')
+source('src/04-02-make-level-table.R')
+source('src/05-01-make-graphs-and-maps-tables.R')
+```
 
 ## 2. What must be configured before running
 
@@ -115,29 +147,179 @@ Defines dataset paths, variables, strata, weights, and language.
 - Helper tables
 - Kobo survey and choices sheets
 
+Define paths to all input data files: Dataset folder and  ISCED mappings
+```
+path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
+data_file <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
+kobo_path <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
+```
 ---
 
-## 3. Conceptual workflow
-Raw MSNA data → Indicators → LOA → Weighted analysis → Labelling → Tables & figures
+### Conceptual workflow
+Clean MSNA data → Indicators → LOA → Weighted analysis → Labelling → Tables & figures
+
+
+### 3. Add Education Indicators
+The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
+
+- Access 
+
+- Education disruption
+
+- School-cycle age categorization: Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
+
+- Level-grade composite indicators: Net attendance, early-enrollment, overage learners.
+
+- OPTIONAL non-core indicators, non-formal and community modality
+
+- Merge the loop with the main script to retrieve weight and strata information, such as admin levels, population groups, etc.
+
+- Filter for School-Age Children
+
+
+The function is defined in **01-add_education_indicators.R**. 
+
+It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and additional education functions defined in 00_edu_function.R
+```
+source('src/01-add_education_indicators.R')
+
+```
+The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
+
+### 4. Run Education Analysis
+
+This function runs the analysis based on the data with the added indicators. It includes generating summary statistics and applying filters based on predefined variables and thresholds.
+
+It is defined in **02-education_analysis.R**
+
+It uses analysistools::create_analysis() function from the **impact-initiatives/analysistools** package https://github.com/impact-initiatives/analysistools/blob/main/R/create_analysis.R
+
+```
+source('src/02-education_analysis.R')
+```
+The output is saved here: *output/grouped_other_education_results_loop.RDS*
+
+### 5. Label Data
+
+After running the analysis, this function ensures that the correct labels are applied to the indicators for easy interpretation. It converts technical names into user-friendly labels according to the KOBO survey and choices and the edu_indicator_labeling.xlsx
+This labeling step is crucial for aligning the analysis output with the desired format for reporting and visualization, ensuring consistency across the dataset and tables.
+
+
+The function is defined here: **03-education_labeling.R**.
+
+```
+source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+```
+The output is saved here: *output/labeled_results_table.RDS  ---- df: education_results_table_labelled*
+
+### 6. Create Tables 
+First create workbook for tables
+```
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+
+wb <- openxlsx::createWorkbook("education_results")
+addWorksheet(wb, "Table_of_content")
+writeData(wb, sheet = "Table_of_content", x = "Table of Content", startCol = 1, startRow = 1)
+
+row_number_lookup <- c(
+  "access" = 2,
+  "overaged" = 3,
+  "out_of_school" = 4,
+  "ece" = 5,
+  "level1" = 6,
+  "level2" = 7,
+  "level3" = 8,
+  "level4" = 9
+)
+
+```
+
+#### Create **Analysis of Children Accessing Education** 
+
+It generates a table showing data on disruptions to education (e.g., due to teacher absence, school occupation, hazards).
+```
+tab_helper <- "access"
+source("src/04-01-make-table-access-overaged-barriers.R")
+```
+It generates a table showing data on overaged learners.
+```
+tab_helper <- "overaged"
+source("src/04-01-make-table-access-overaged-barriers.R")
+```
+#### Create **Analysis of Children Not Accessing Education, OoS** 
+
+IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_table_helper_FR.xlsx.  
+```
+tab_helper <- "out_of_school"
+source("src/04-01-make-table-access-overaged-barriers.R")
+```
+
+#### Create **Early childhood education and early enrolment** 
+
+It generates a table specifically for indicators related to children one year before they reach the age to start primary school.
+```
+tab_helper <- "ece"
+source("src/04-02-make-level-table.R")
+```
+
+#### Create **School Attendance Profile** 
+
+To repeat according to the number of levels (except ECE) in the country's school system
+
+```
+tab_helper <- "level1"
+source("src/04-02-make-level-table.R")
+
+tab_helper <- "level2"
+source("src/04-02-make-level-table.R")
+
+tab_helper <- "level3"
+source("src/04-02-make-level-table.R")
+
+openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
+openxlsx::openXL("output/education_results.xlsx")
+```
+
+#### Final Output and Workbook Creation
+
+A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
+
+It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
+
+### 7. Create Graphs 
+```
+tab_helper <- "access"
+results_filtered <- "output/rds_results/access_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "overaged"
+results_filtered <- "output/rds_results/overaged_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "out_of_school"
+results_filtered <- "output/rds_results/out_of_school_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "ece"
+results_filtered <- "output/rds_results/ece_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "level1"
+results_filtered <- "output/rds_results/level1_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "level2"
+results_filtered <- "output/rds_results/level2_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "level3"
+results_filtered <- "output/rds_results/level3_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+```
+
+
 
 ---
-
-## 4. Script-by-script explanation
-See detailed description in the handover document.
-
----
-
-## 5. Outputs
-- loop_edu_recorded_<ISO3>.xlsx
-- loa_analysis_<ISO3>.csv
-- labeled_results_table_<ISO3>.RDS
-- education_results_<ISO3>.xlsx
-- graphs and maps
-
----
-
-## 6. Known failure points
-Metadata errors, ISCED mismatches, missing weights, duplicated Kobo labels.
 
 # Education x-Crisis Global Analysis & PowerBI Dataset Preparation
 
@@ -549,4 +731,6 @@ A new analyst should follow this exact checklist:
 - `output/global_pBI/2024_MSNA_barrier_top1_indicator_data.csv` 
 - `output/global_pBI/2024_MSNA_combined_clustering_data.csv` 
 - plus “by country” and “by indicator” Excel browsing workbooks 
+
+
 
