@@ -488,10 +488,6 @@ It only works if the country pipeline has already produced, for each country:
 
 If a country file is missing, that country will simply not be added to the global dataset (the script checks `file.exists`). 
 
-### The “source of truth” for comparability is the global metadata
-The global pipeline does not guess which indicators to use: it reads them from the metadata and uses the same list across countries. 
-
-
 
 ## Repository structure and required files
 
