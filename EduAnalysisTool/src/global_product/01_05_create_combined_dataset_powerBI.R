@@ -344,7 +344,6 @@ pBI_binary_indicator_data_only_gender <- pBI_binary_indicator_data_only_gender %
   # 2) reshape long → wide
   pivot_wider(
     id_cols    = c(country, analysis_var, school_cycle, indicator, admin_info, pop_group, setting),
-    # ↑ keep any other constant cols you like
     names_from = gender_col,
     values_from = c(stat_pct, n_total),
     names_glue = "{.value}_{gender_col}"
