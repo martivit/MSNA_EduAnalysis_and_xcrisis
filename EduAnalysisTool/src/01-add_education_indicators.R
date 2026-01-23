@@ -153,179 +153,115 @@ if (country_assessment == "AFG") {
 #--------------------------------------------------------------------------------------------------------
 # Merge main info into loop dataset
 # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
+#--------------------------------------------------------------------------------------------------------
+# Merge main info into loop dataset
+# Optimized version with reduced redundancy and improved performance
+
+# Helper functions
 check_and_set_merge_column <- function(loop, main_col) {
   if (is.null(main_col) || main_col %in% colnames(loop)) NA_character_ else main_col
 }
-  
 
-add_cols_tot = c()
-if (country_assessment == "UKR") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c(
-    "D_7_edu_disrupted_displacement",
-    "D_3_edu_modality",
-    "D_6_edu_disrupted_school_damage",
-    "G_2_edu_disrupted_air_alerts",
-    "G_3_edu_support_time",
-    "K_20_utility_interrupt",
-    "K_22_internet_hours",
-    "J_2_conflict_exposure_shelling",
-    "J_3_conflict_exposure_shelling_freq",
-    "J_4_conflict_exposure_attacks",
-    "J_5_conflict_exposure_attacks_freq",
-    "J_6_gen_safety_incidents",
-    "J_6_0_gen_safety_incidents_other",
-    "J_8_risk_concern",
-    "J_9_leave_concern",
-    "K_10_shelter_damage",
-    "K_11_shelter_damage_repaired",
-    "K_12_shelter_damage_repaired_reasons",
-    "K_12_1_shelter_damage_repaired_reasons_other",
-    "K_13_shelter_damage_type"
-
-  )
+grab_prefixed_cols_both <- function(prefix, main, loop) {
+  if (is.null(prefix) || is.na(prefix) || prefix == "") return(character(0))
+  pat <- paste0("^", prefix, "([_/\\.].*|$)")
+  unique(c(
+    names(main)[grepl(pat, names(main))],
+    names(loop)[grepl(pat, names(loop))]
+  ))
 }
-if (country_assessment == "DRC") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c(
-    "edu_disrupted_attack_afc")}
-if (country_assessment == "CAR") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c(
-    "edu_barrier_2nd_reason")}
-if (country_assessment == "AFG") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c(
-    "children_schooling_type"
-    
-  )}
-if (country_assessment == "MOZ") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c("edu_ind_has_impairment",
-    "barrier_impairament"
-    
-  )}
-if (country_assessment == "MMR") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_community_modality'
-                    
-  )}
-if (country_assessment == "SOM") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_program_type'
-                    
-  )}
-if (country_assessment == "SDN") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c('schl_learnin_enviro'
-                    
-  )}
-if (country_assessment == "SYR") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_access_syr', "edu_acceptable_conditions", "edu_barrier_syr", 
-                    "edu_ind_not_enrolled", "edu_ind_not_enrolled", "edu_other_type_syr",
-                    "edu_other_yn_syr"
-                    
-  )}
-if (country_assessment == "LBN") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_disrupted_financial', 'formal_school_type', 
-                    'edu_access_past', 'edu_enrolment_past'
 
-  )}
-if (country_assessment == "BFA") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c('e_incident_trajet', 'e_incident_ecol', "e_abandon"
-  )}
+# Country-specific additional columns configuration
+country_cols_config <- list(
+  UKR = c(
+    "D_7_edu_disrupted_displacement", "D_3_edu_modality",
+    "D_6_edu_disrupted_school_damage", "G_2_edu_disrupted_air_alerts",
+    "G_3_edu_support_time", "K_20_utility_interrupt", "K_22_internet_hours",
+    "J_2_conflict_exposure_shelling", "J_3_conflict_exposure_shelling_freq",
+    "J_4_conflict_exposure_attacks", "J_5_conflict_exposure_attacks_freq",
+    "J_6_gen_safety_incidents", "J_6_0_gen_safety_incidents_other",
+    "J_8_risk_concern", "J_9_leave_concern", "K_10_shelter_damage",
+    "K_11_shelter_damage_repaired", "K_12_shelter_damage_repaired_reasons",
+    "K_12_1_shelter_damage_repaired_reasons_other", "K_13_shelter_damage_type"
+  ),
+  DRC = "edu_disrupted_attack_afc",
+  CAR = "edu_barrier_2nd_reason",
+  AFG = "children_schooling_type",
+  MOZ = c("edu_ind_has_impairment", "barrier_impairament"),
+  MMR = "edu_community_modality",
+  SOM = "edu_program_type",
+  SDN = "schl_learnin_enviro",
+  SYR = c("edu_access_syr", "edu_acceptable_conditions", "edu_barrier_syr",
+          "edu_ind_not_enrolled", "edu_other_type_syr", "edu_other_yn_syr"),
+  LBN = c("edu_disrupted_financial", "formal_school_type",
+          "edu_access_past", "edu_enrolment_past"),
+  BFA = c("e_incident_trajet", "e_incident_ecol", "e_abandon")
+)
 
-#modality_column <- "edu_community_modality"  # already set above
-modality_column <- "edu_community_modality"  # already set above
-barrier_multiple_ssd <- "edu_barrier_sm"  # already set above
-barrier_multiple_ukr <- "D_5_edu_barrier_sm"  # already set above
-barrier_multiple_eth <- "edu_barrier"  # already set above
-concern_multiple_sdn <- "alternative_education"  # already set above
-barrier_multiple_sdn <- "barriers_education"  # already set above
-barrier_multiple_syr <- "edu_barriers_conditions"  # already set above
-barrier_multiple_bfa <- "e_educ_non_formel_type"  # already set above
+# Barrier select multiple /modality column configuration by country
+barrier_config <- list(
+  modality = "edu_community_modality",
+  SSD = "edu_barrier_sm",
+  UKR = "D_5_edu_barrier_sm",
+  ETH = "edu_barrier",
+  SDN_concern = "alternative_education",
+  SDN_barrier = "barriers_education",
+  SYR = "edu_barriers_conditions",
+  BFA = "e_educ_non_formel_type"
+)
 
-
-
-# gather your legacy add_col1...add_col9
+# Initialize wish list with legacy columns and country-specific columns
 candidates <- c(add_col1, add_col2, add_col3, add_col4,
                 add_col5, add_col6, add_col7, add_col8, add_col9)
 
-# 1) combine BOTH sources (drop NULLs + dedupe)
+add_cols_tot <- country_cols_config[[country_assessment]]
+if (is.null(add_cols_tot)) add_cols_tot <- character(0)
+
 wish <- unique(c(Filter(Negate(is.null), candidates), add_cols_tot))
 
-modality_cols <- names(main)[
-  grepl(paste0("^", modality_column, "([_/\\.].*|$)"), names(main))
-]
+# Add modality columns (common for all countries)
+modality_cols <- grab_prefixed_cols_both(barrier_config$modality, main, loop)
+wish <- unique(c(wish, modality_cols))
 
-if (length(modality_cols)) {
-  wish <- unique(c(wish, modality_cols))
-}
-if (country_assessment == "SSD") {
-  barrier_sm_cols <- names(main)[
-    grepl(paste0("^", barrier_multiple_ssd, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier_sm_cols)) {
-    wish <- unique(c(wish, barrier_sm_cols))
-  }
-}
-if (country_assessment == "UKR") {
-  barrier_sm_cols <- names(main)[
-    grepl(paste0("^", barrier_multiple_ukr, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier_sm_cols)) {
-    wish <- unique(c(wish, barrier_sm_cols))
-  }
-}
-if (country_assessment == "ETH") {
-  barrier_sm_cols <- names(main)[
-    grepl(paste0("^", barrier_multiple_eth, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier_sm_cols)) {
-    wish <- unique(c(wish, barrier_sm_cols))
-  }
-}
-if (country_assessment == "SYR") {
-  barrier_sm_cols <- names(main)[
-    grepl(paste0("^", barrier_multiple_syr, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier_sm_cols)) {
-    wish <- unique(c(wish, barrier_sm_cols))
-  }
-}
-if (country_assessment == "SDN") {
-  barrier2_sm_cols <- names(main)[
-    grepl(paste0("^", concern_multiple_sdn, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier2_sm_cols)) {
-    wish <- unique(c(wish, barrier2_sm_cols))
-  }
-}
-if (country_assessment == "SDN") {
-  barrier_sm_cols <- names(main)[
-    grepl(paste0("^", barrier_multiple_sdn, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier_sm_cols)) {
-    wish <- unique(c(wish, barrier_sm_cols))
-  }
-}
-if (country_assessment == "BFA") {
-  barrier_sm_cols <- names(main)[
-    grepl(paste0("^", barrier_multiple_bfa, "([_/\\.].*|$)"), names(loop))
-  ]
-  if (length(barrier_sm_cols)) {
-    wish <- unique(c(wish, barrier_sm_cols))
+# Add barrier columns based on country
+barrier_mappings <- list(
+  SSD = list(prefix = barrier_config$SSD, source = "both"),
+  UKR = list(prefix = barrier_config$UKR, source = "both"),
+  ETH = list(prefix = barrier_config$ETH, source = "both"),
+  SYR = list(prefix = barrier_config$SYR, source = "both"),
+  SDN = list(
+    list(prefix = barrier_config$SDN_concern, source = "both"),
+    list(prefix = barrier_config$SDN_barrier, source = "both")
+  ),
+  BFA = list(prefix = barrier_config$BFA, source = "both")
+)
+
+# Process barrier columns for current country
+if (!is.null(barrier_mappings[[country_assessment]])) {
+  configs <- barrier_mappings[[country_assessment]]
+  
+  # Handle SDN special case (two barrier types)
+  if (!is.list(configs[[1]])) configs <- list(configs)
+  
+  for (config in configs) {
+    barrier_cols <- if (config$source == "both") {
+      grab_prefixed_cols_both(config$prefix, main, loop)
+    } else {
+      source_df <- if (config$source == "loop") loop else main
+      pat <- paste0("^", config$prefix, "([_/\\.].*|$)")
+      names(source_df)[grepl(pat, names(source_df))]
+    }
+    
+    if (length(barrier_cols) > 0) {
+      wish <- unique(c(wish, barrier_cols))
+    }
   }
 }
 
-# 2) only merge columns that are NOT already in loop
-#    (this guarantees we won’t drop/replace existing loop columns)
+# Only merge columns NOT already in loop
 add_cols <- setdiff(wish, colnames(loop))
-#add_cols <- wish
-# 3) call the merge (disable regex auto-includes to avoid re-merging existing cols)
+
+# Merge main info into loop
 loop <- merge_main_info_in_loop(
   loop = loop, main = main,
   id_col_loop = id_col_loop, id_col_main = id_col_main,
@@ -333,7 +269,7 @@ loop <- merge_main_info_in_loop(
   stratum = stratum, additional_stratum = additional_stratum,
   weight = weight_col,
   add_cols = add_cols,
-  include_regex = character(0)   # important if you want to avoid re-merging matches already in loop
+  include_regex = character(0)
 )
 
 

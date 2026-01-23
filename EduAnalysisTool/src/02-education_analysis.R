@@ -20,7 +20,7 @@ test_df <-
 results_loop_weigthed <- create_analysis(
   design_loop,
   loa = loa_country,
-  sm_separator =  "_")
+  sm_separator =  ".")
 
 results_loop_weigthed$results_table %>%  write.csv(paste0('output/analysis_key_output', country_assessment,'.csv'))
 results_loop_weigthed %>%
